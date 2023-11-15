@@ -2,6 +2,8 @@ import javax.swing.*;
 
 public class GUI {
     private JButton button1;
+    private JButton button1Button;
+    private JTextField TESTINGRORTextField;
 
     GUI() {
         JFrame frame = new JFrame("User Management App");
@@ -20,5 +22,9 @@ public class GUI {
                 new GUI();
             }
         });
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
     }
 }
