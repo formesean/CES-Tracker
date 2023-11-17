@@ -1,2 +1,1 @@
-1,Sean Karl Tyrese G. Aguilar,22101612@usc.edu.ph,Ules0032300.,22101612,Student,0
-2,User Admin,seanaguilar698@gmail.com,Ules0032300.,22101612,Admin,0
+1,Admin User,seanaguilar698@gmail.com,admin1234,22101612,Admin,0
