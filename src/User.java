@@ -7,6 +7,15 @@ public class User {
     private String type;
     private int cesPoints;
 
+    User(String fullName, String email, String password, int idNumber, String type, int cesPoints) {
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+        this.idNumber = idNumber;
+        this.type = type;
+        this.cesPoints = cesPoints;
+    }
+
     User(int uniqueID, String fullName, String email, String password, int idNumber, String type, int cesPoints) {
         this.uniqueID = uniqueID;
         this.fullName = fullName;
