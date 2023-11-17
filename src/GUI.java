@@ -29,10 +29,10 @@ public class GUI {
     private JButton button2;
     private JButton logInBtn;
 
-    private UserAuth userAuth = new UserAuth();
+    private DatabaseManager databaseManager;
 
     GUI() {
-        userAuth.loadUsersFromFile();
+        databaseManager = new DatabaseManager("jdbc:mysql://localhost:3306/oop", "root", "sean04");
         JFrame frame = new JFrame("CES TRACKER");
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -49,21 +49,13 @@ public class GUI {
         signUpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int uniqueID = userAuth.generateUniqueID();
                 String fullName = fullNameTextField.getText();
                 String email = emailTextField.getText();
                 String password = String.valueOf(passwordPasswordField.getPassword());
                 int idNumber = Integer.parseInt(idNumberTextField.getText());
-                String type = userAuth.isEmailAdmin(email) ? "Admin" : "Student";
+                String type = databaseManager.isAdminEmail(email) ? "Admin" : "Student";
 
-                User newUser = new User(uniqueID, fullName, email, password, idNumber, type, 0);
-                userAuth.users.add(newUser);
-
-                if (userAuth.saveUsersToFile()) {
-                    JOptionPane.showMessageDialog(null, "User added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Error adding user. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
+                databaseManager.insertUserData(fullName, email, password, idNumber, type, 0);
             }
         });
 
@@ -89,32 +81,7 @@ public class GUI {
 
         logInBtn.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) { 
-                String email = emailField.getText();
-                String password = String.valueOf(passwordField.getPassword());
-
-                for (User user : userAuth.users) {
-                    if (user.getEmail().equals(email) && user.getPassword().equals(password)) {
-                        userAuth.loggedInUser = user;
-                        userAuth.saveLoggedUsersToFile();
-                        userAuth.isLoggedIn = true;
-                        break;
-                    }
-                }
-
-                if (userAuth.isLoggedIn) {
-                    StudentSP.setVisible(true);
-                    Profile.setVisible(true);
-                    OnBoardingSP.setVisible(false);
-                    SignUp.setVisible(false);
-                    LogIn.setVisible(false);
-                    SignUpTitle.setVisible(false);
-                    LogInTitle.setVisible(false);
-
-                    JOptionPane.showMessageDialog(null, "Logged In successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Error logging in. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
+            public void actionPerformed(ActionEvent e) {
             }
         });
     }
