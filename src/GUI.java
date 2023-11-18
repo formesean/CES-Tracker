@@ -25,7 +25,6 @@ public class GUI {
     private JTextField emailField;
     private JButton goToSignUp;
     private JPanel Profile;
-    private JTable table1;
     private JPanel OnBoardingSP;
     private JPanel StudentSP;
     private JButton button1;
@@ -38,6 +37,13 @@ public class GUI {
     private JPanel AdminSP;
     private JButton StudentLogout;
     private JButton AdminLogout;
+    private JButton button8;
+    private JPanel UserInfo;
+    private JPanel UserCES;
+    private JButton changePass;
+    private JLabel userName;
+    private JLabel userType;
+    private JLabel userCourse;
 
     private DatabaseManager databaseManager;
     private Controller controller;
@@ -104,8 +110,8 @@ public class GUI {
 
                 try {
                     if (databaseManager.isEmailExists(email)) {
-                        // Email exists, now check the password
                         if (databaseManager.authenticateUser(email, password)) {
+                            updateLoggedInUserInfoLabels(email);
                             String userType = databaseManager.getUserType(email);
 
                             if ("Admin".equals(userType)) {
@@ -135,10 +141,10 @@ public class GUI {
                     } else {
                         JOptionPane.showMessageDialog(null, "Email not found. Please sign up or try again.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
+                    clearTextFields();
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(null, "Failed to authenticate user.\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                clearTextFields();
             }
         });
 
@@ -174,6 +180,7 @@ public class GUI {
 
             if (email != null && !email.isEmpty()) {
                 if (databaseManager.isEmailExists(email)) {
+                    updateLoggedInUserInfoLabels(email);
                     String userType = databaseManager.getUserType(email);
 
                     if ("Admin".equals(userType)) {
@@ -205,6 +212,15 @@ public class GUI {
         idNumberTextField.setText("");
         passwordField.setText("");
         emailField.setText("");
+    }
+
+    private void updateLoggedInUserInfoLabels(String email) {
+        String name = databaseManager.getUserName(email);
+        String type = databaseManager.getUserType(email);
+
+        userName.setText(name);
+        userType.setText(type);
+        userCourse.setText("BS Computer Engineering");
     }
 
     public static void main(String[] args) {

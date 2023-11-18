@@ -116,6 +116,22 @@ public class DatabaseManager {
         return false;
     }
 
+    public String getUserName(String email) {
+        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            PreparedStatement statement = dbConnection.prepareStatement("SELECT userName FROM users WHERE userEmail = ?");
+            statement.setString(1, email);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getString("userName");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return "";
+    }
+
     public String getUserType(String email) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             PreparedStatement statement = dbConnection.prepareStatement("SELECT userType FROM users WHERE userEmail = ?");
