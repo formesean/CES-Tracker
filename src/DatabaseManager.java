@@ -34,6 +34,11 @@ public class DatabaseManager {
      */
     public void insertUserData(String fullName, String email, String password, int idNumber, String type, int cesPoints) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            if (isEmailExists(email) && isIDNumberExists(idNumber)) {
+                JOptionPane.showMessageDialog(null, "Email already exists! Please use a different email.", "Error", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
             PreparedStatement preparedStatement = dbConnection.prepareStatement("INSERT INTO users (userName, userEmail, userPassword, userIDNumber, userType, userCESPoints) VALUES (?, ?, ?, ?, ?, ?)");
             preparedStatement.setString(1, fullName);
             preparedStatement.setString(2, email);
@@ -51,6 +56,34 @@ public class DatabaseManager {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Failed to insert user into the database.\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    public boolean isEmailExists(String email) throws SQLException {
+        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            PreparedStatement statement = dbConnection.prepareStatement("SELECT COUNT(*) FROM users WHERE userEmail = ?");
+            statement.setString(1, email);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getInt(1) > 0;
+            }
+        }
+        return false;
+    }
+
+    public boolean isIDNumberExists(int idNumber) throws SQLException {
+        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            PreparedStatement statement = dbConnection.prepareStatement("SELECT COUNT(*) FROM users WHERE userIDNumber = ?");
+            statement.setInt(1, idNumber);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getInt(1) > 0;
+            }
+        }
+        return false;
     }
 
     public boolean isAdminEmail(String email) {
