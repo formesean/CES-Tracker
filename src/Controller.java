@@ -8,6 +8,11 @@ import java.io.*;
 import java.sql.SQLException;
 
 public class Controller {
+    /**
+     * Writes the logged-in user ID to a file for future reference.
+     *
+     * @param id The unique ID of the logged-in user.
+     */
     protected void writeLoggedUserToFile(String id) {
         try {
             FileWriter writer = new FileWriter("loggedUser.txt");
@@ -18,11 +23,24 @@ public class Controller {
         }
     }
 
+    /**
+     * Encrypts a password using the StrongPasswordEncryptor.
+     *
+     * @param password The password to be encrypted.
+     * @return The encrypted password.
+     */
     protected static String encryptPassword(String password) {
         StrongPasswordEncryptor passwordEncryptor = new StrongPasswordEncryptor();
         return passwordEncryptor.encryptPassword(password);
     }
 
+    /**
+     * Converts an ImageIcon to a byte array for storage.
+     *
+     * @param icon The ImageIcon to be converted.
+     * @return The byte array representing the image.
+     * @throws IOException If there is an issue with image conversion.
+     */
     protected byte[] convertImageIconToBytes(ImageIcon icon) throws IOException {
         BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics g = image.getGraphics();
@@ -34,6 +52,13 @@ public class Controller {
         return baos.toByteArray();
     }
 
+    /**
+     * Converts a byte array to an ImageIcon for display.
+     *
+     * @param bytes The byte array representing the image.
+     * @return The ImageIcon created from the byte array.
+     * @throws IOException If there is an issue with image conversion.
+     */
     protected ImageIcon convertBytesToImageIcon(byte[] bytes) throws IOException {
         if (bytes != null && bytes.length > 0) {
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);

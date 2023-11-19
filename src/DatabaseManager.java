@@ -29,6 +29,7 @@ public class DatabaseManager {
     /**
      * Inserts a new user into the database.
      *
+     * @param id = The unique ID of the user.
      * @param fullName = The full name of the user.
      * @param email = The email of the user.
      * @param password = The password of the user.
@@ -64,6 +65,13 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Checks if a given UUID already exists in the database.
+     *
+     * @param id The UUID to check for existence.
+     * @return True if the UUID exists, false otherwise.
+     * @throws SQLException If an SQL exception occurs during database access.
+     */
     public boolean isUUIDExists(String id) throws SQLException {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             PreparedStatement statement = dbConnection.prepareStatement("SELECT COUNT(*) FROM users WHERE userID = ?");
@@ -78,6 +86,13 @@ public class DatabaseManager {
         return false;
     }
 
+    /**
+     * Checks if a given email already exists in the database.
+     *
+     * @param email The email to check for existence.
+     * @return True if the email exists, false otherwise.
+     * @throws SQLException If an SQL exception occurs during database access.
+     */
     public boolean isEmailExists(String email) throws SQLException {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             PreparedStatement statement = dbConnection.prepareStatement("SELECT COUNT(*) FROM users WHERE userEmail = ?");
@@ -92,6 +107,13 @@ public class DatabaseManager {
         return false;
     }
 
+    /**
+     * Checks if a given ID number already exists in the database.
+     *
+     * @param idNumber The ID number to check for existence.
+     * @return True if the ID number exists, false otherwise.
+     * @throws SQLException If an SQL exception occurs during database access.
+     */
     public boolean isIDNumberExists(int idNumber) throws SQLException {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             PreparedStatement statement = dbConnection.prepareStatement("SELECT COUNT(*) FROM users WHERE userIDNumber = ?");
@@ -106,6 +128,12 @@ public class DatabaseManager {
         return false;
     }
 
+    /**
+     * Checks if a given email corresponds to an admin user.
+     *
+     * @param email The email to check.
+     * @return True if the email corresponds to an admin, false otherwise.
+     */
     public boolean isAdminEmail(String email) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             PreparedStatement statement = dbConnection.prepareStatement("SELECT * FROM admins WHERE adminEmail = ?");
@@ -122,6 +150,14 @@ public class DatabaseManager {
         return false;
     }
 
+    /**
+     * Authenticates a user based on their email and password.
+     *
+     * @param email    The email of the user.
+     * @param password The password of the user.
+     * @return True if authentication is successful, false otherwise.
+     * @throws SQLException If an SQL exception occurs during database access.
+     */
     public boolean authenticateUser(String email, String password) throws SQLException {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             PreparedStatement statement = dbConnection.prepareStatement("SELECT userPassword FROM users WHERE userEmail = ?");
@@ -139,6 +175,13 @@ public class DatabaseManager {
         return false;
     }
 
+    /**
+     * Retrieves the user ID associated with a given email.
+     *
+     * @param email The email for which to retrieve the user ID.
+     * @return The user ID associated with the email.
+     * @throws RuntimeException If an exception occurs during database access.
+     */
     public String getUserID(String email) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             PreparedStatement statement = dbConnection.prepareStatement("SELECT userID FROM users WHERE userEmail = ?");
@@ -155,6 +198,12 @@ public class DatabaseManager {
         return "";
     }
 
+    /**
+     * Retrieves a User object based on the user ID.
+     *
+     * @param id The user ID.
+     * @return A User object representing the user with the given ID.
+     */
     public User getUser(String id) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             try (PreparedStatement statement = dbConnection.prepareStatement("SELECT * FROM users WHERE userID = ?")) {
@@ -192,6 +241,12 @@ public class DatabaseManager {
         return null;
     }
 
+    /**
+     * Updates the year level of a user.
+     *
+     * @param id        The user ID.
+     * @param yearLevel The new year level.
+     */
     public void setYearLevel(String id, String yearLevel) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             PreparedStatement preparedStatement = dbConnection.prepareStatement("UPDATE users SET userYearLevel = ? WHERE userID = ?");
@@ -209,6 +264,11 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Retrieves a list of all users in the database.
+     *
+     * @return A list of User objects representing all users in the database.
+     */
     public List<User> getAllUser() {
         List<User> users = new ArrayList<>();
 
@@ -233,6 +293,11 @@ public class DatabaseManager {
         return users;
     }
 
+    /**
+     * Retrieves a list of all evaluation form data in the database.
+     *
+     * @return A list of EvaluationForm objects representing all evaluation forms in the database.
+     */
     public List<EvaluationForm> getAllEvalFormData() {
         List<EvaluationForm> evalFormDataList = new ArrayList<>();
 
@@ -262,6 +327,18 @@ public class DatabaseManager {
         return evalFormDataList;
     }
 
+    /**
+     * Inserts a new evaluation form into the database.
+     *
+     * @param evalformID   The unique ID of the evaluation form.
+     * @param userID       The user ID associated with the evaluation form.
+     * @param eventID      The event ID associated with the evaluation form.
+     * @param qOne         The response to the first question.
+     * @param qTwo         The response to the second question.
+     * @param beginningImg The image associated with the beginning of the event.
+     * @param middleImg    The image associated with the middle of the event.
+     * @param endImg       The image associated with the end of the event.
+     */
     public void insertEvalForm(String evalformID, String userID, String eventID, String qOne, String qTwo, ImageIcon beginningImg, ImageIcon middleImg, ImageIcon endImg) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             PreparedStatement statement = dbConnection.prepareStatement("INSERT INTO evalform (evalformID, userID, eventID, qOne, qTwo, beginningImg, middleImg, endImg, submitted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -292,6 +369,12 @@ public class DatabaseManager {
         }
     }
 
+    /**
+     * Changes the password of a user in the database.
+     *
+     * @param userId            The user ID for which to change the password.
+     * @param encryptedPassword The new encrypted password.
+     */
     public void changePassword(String userId, String encryptedPassword) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             PreparedStatement preparedStatement = dbConnection.prepareStatement("UPDATE users SET userPassword = ? WHERE userID = ?");

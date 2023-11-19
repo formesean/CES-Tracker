@@ -118,6 +118,12 @@ public class GUI {
 //        }
 
         signUpButton.addActionListener(new ActionListener() {
+            /**
+             * Performs user account creation when the button is clicked.
+             * Generates a unique ID, collects user input, and inserts data into the database.
+             *
+             * @param e The ActionEvent triggered by clicking the "Sign Up" button.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 UUID uuid = UUID.randomUUID();
@@ -135,6 +141,12 @@ public class GUI {
         });
 
         goToLogIn.addActionListener(new ActionListener() {
+            /**
+             * Switches to the login panel when the button is clicked.
+             * Clears input fields for a fresh login attempt.
+             *
+             * @param e The ActionEvent triggered by clicking the button.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 clearTextFields();
@@ -146,6 +158,12 @@ public class GUI {
         });
 
         goToSignUp.addActionListener(new ActionListener() {
+            /**
+             * Switches to the signup panel when the button is clicked.
+             * Clears input fields for a fresh registration attempt.
+             *
+             * @param e The ActionEvent triggered by clicking the button.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 clearTextFields();
@@ -157,6 +175,13 @@ public class GUI {
         });
 
         logInBtn.addActionListener(new ActionListener() {
+            /**
+             * Handles user login when the "Log In" button is clicked.
+             * Authenticates user credentials, switches to the appropriate panel,
+             * and displays success or error messages.
+             *
+             * @param e The ActionEvent triggered by clicking the "Log In" button.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 String email = emailField.getText();
@@ -216,7 +241,6 @@ public class GUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 UserManagement.setVisible(false);
-
                 Profile.setVisible(true);
             }
         });
@@ -230,6 +254,13 @@ public class GUI {
         });
 
         submitEvalFormBtn.addActionListener(new ActionListener() {
+            /**
+             * Handles the submission of the evaluation form when the "Submit" button is clicked.
+             * Reads user input, retrieves logged-in user information, and inserts the evaluation form data into the database.
+             * Displays an error message if any required information is missing.
+             *
+             * @param e The ActionEvent triggered by clicking the "Submit" button.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -257,6 +288,12 @@ public class GUI {
         });
 
         userManangementButton.addActionListener(new ActionListener() {
+            /**
+             * Handles the navigation to the User Management panel when the "User Management" button is clicked.
+             * Retrieves user data from the database and populates the User Management table.
+             *
+             * @param e The ActionEvent triggered by clicking the "User Management" button.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 Profile.setVisible(false);
@@ -274,6 +311,12 @@ public class GUI {
         });
 
         setYrLvlBtn.addActionListener(new ActionListener() {
+            /**
+             * Handles setting the year level for a student when the "Set Year Level" button is clicked.
+             * Displays a dialog for year level selection and updates the user's year level in the database.
+             *
+             * @param e The ActionEvent triggered by clicking the "Set Year Level" button.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (loggedUser != null && "Student".equals(loggedUser.getType())) {
@@ -293,6 +336,12 @@ public class GUI {
         });
 
         changePass.addActionListener(new ActionListener() {
+            /**
+             * Handles the change password functionality when the "Change Password" button is clicked.
+             * Prompts the user for a new password and updates the password in the database.
+             *
+             * @param e The ActionEvent triggered by clicking the "Change Password" button.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 JPasswordField passwordField = new JPasswordField();
@@ -320,6 +369,12 @@ public class GUI {
         });
 
         ActionListener logoutListener = new ActionListener() {
+            /**
+             * Handles user logout when the "Logout" button is clicked.
+             * Switches panels to the login screen, clears the logged-in user data, and resets the stored user file.
+             *
+             * @param e The ActionEvent triggered by clicking the "Logout" button.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 SignUpTitle.setVisible(false);
@@ -342,6 +397,13 @@ public class GUI {
         };
 
         ActionListener selectImage = new ActionListener() {
+            /**
+             * Handles image selection when one of the image selection buttons (Beginning, Middle, End) is clicked.
+             * Displays a file chooser, allowing the user to select an image file.
+             * Resizes the selected image and sets it as an icon for the corresponding image label.
+             *
+             * @param e The ActionEvent triggered by clicking one of the image selection buttons.
+             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 JButton sourceBtn = (JButton) e.getSource();
@@ -379,6 +441,11 @@ public class GUI {
         endButton.addActionListener(selectImage);
     }
 
+    /**
+     * Performs automatic login if a user is logged in.
+     * Reads the stored user file, retrieves the user's ID, and displays the appropriate panels based on the user type.
+     * Handles the transition to the main profile screen for Admin or Student users.
+     */
     private void performAutoLogin() {
         try (BufferedReader reader = new BufferedReader(new FileReader("loggedUser.txt"));) {
             String userID = reader.readLine();
@@ -421,6 +488,11 @@ public class GUI {
         emailField.setText("");
     }
 
+    /**
+     * Updates the labels in the profile with the logged-in user's information.
+     *
+     * @param id The unique ID of the logged-in user.
+     */
     private void updateLoggedInUserInfoLabels(String id) {
         User userProfile = databaseManager.getUser(id);
 
