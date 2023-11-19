@@ -35,7 +35,7 @@ public class DatabaseManager {
     public void insertUserData(String fullName, String email, String password, int idNumber, String type, int cesPoints) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             if (isEmailExists(email) && isIDNumberExists(idNumber)) {
-                JOptionPane.showMessageDialog(null, "Email already exists! Please use a different email.", "Error", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Email and ID Number already exists! Please try again.", "Error", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
@@ -102,17 +102,49 @@ public class DatabaseManager {
         return false;
     }
 
-    /**
-     * Fetches user data from the database and returns the result set.
-     *
-     * @return The result set containing user data.
-     */
-    public ResultSet fetchUserData() {
+    public boolean authenticateUser(String email, String password) throws SQLException {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
-            Statement statement = dbConnection.createStatement();
-            return statement.executeQuery("SELECT * FROM users");
+            PreparedStatement statement = dbConnection.prepareStatement("SELECT userPassword FROM users WHERE userEmail = ?");
+            statement.setString(1, email);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getString("userPassword").equals(password);
+            }
+        }
+        return false;
+    }
+
+    public String getUserName(String email) {
+        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            PreparedStatement statement = dbConnection.prepareStatement("SELECT userName FROM users WHERE userEmail = ?");
+            statement.setString(1, email);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getString("userName");
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return "";
+    }
+
+    public String getUserType(String email) {
+        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            PreparedStatement statement = dbConnection.prepareStatement("SELECT userType FROM users WHERE userEmail = ?");
+            statement.setString(1, email);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getString("userType");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return "";
     }
 }
