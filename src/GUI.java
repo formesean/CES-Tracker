@@ -9,7 +9,6 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class GUI {
     private JPanel MainWindow;
@@ -65,9 +64,17 @@ public class GUI {
     private JPanel UserManagement;
     private JTable umTable;
     private JButton setYrLvlBtn;
+    private JButton year1Button;
+    private JButton year2Button;
+    private JButton year3Button;
+    private JButton year4Button;
+    private JButton batchXButton;
+    private JButton editButton;
+    private JButton deleteButton;
+    private JButton allButton;
+    private JTextField searchField;
 
     private DefaultTableModel umTableModel;
-    private ScheduledExecutorService dataUpdater;
 
     private DatabaseManager databaseManager;
     private Controller controller;
@@ -90,6 +97,7 @@ public class GUI {
         umTableModel = new DefaultTableModel();
         umTableModel.addColumn("Full Name");
         umTableModel.addColumn("Email");
+        umTableModel.addColumn("Year Level");
         umTableModel.addColumn("ID Number");
         umTableModel.addColumn("CES Points");
 
@@ -297,16 +305,18 @@ public class GUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Profile.setVisible(false);
-
                 UserManagement.setVisible(true);
 
                 umTable.setModel(umTableModel);
-                users = databaseManager.getAllUser();
+                users = databaseManager.getAllStudents();
                 umTableModel.setRowCount(0);
 
                 for (User user : users) {
-                    umTableModel.addRow(new Object[]{user.getFullName(), user.getEmail(), user.getIDNumber(), user.getCESPoints()});
+                    umTableModel.addRow(new Object[]{user.getFullName(), user.getEmail(), user.getIDNumber(), ((Student) user).getYearLevel(), user.getCESPoints()});
                 }
+
+                umTableModel.fireTableDataChanged();
+                umTable.repaint();
             }
         });
 
@@ -365,6 +375,80 @@ public class GUI {
                 } else {
                     JOptionPane.showMessageDialog(null, "Password change canceled.", "Information", JOptionPane.INFORMATION_MESSAGE);
                 }
+            }
+        });
+
+        editButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = umTable.getSelectedRow();
+
+                if (selectedRow != -1) {
+                    User selectedUser = users.get(selectedRow);
+                    String selectedUserID = selectedUser.getUniqueID();
+
+                    String newCESPointsString = JOptionPane.showInputDialog(null, "Enter new CES Points for " + selectedUser.getFullName() + ":");
+
+                    if (newCESPointsString != null && newCESPointsString.matches("\\d+")) {
+                        int newCESPoints = Integer.parseInt(newCESPointsString);
+
+                        databaseManager.updateUserCESPoints(selectedUserID, newCESPoints);
+
+                        umTableModel.setValueAt(newCESPoints, selectedRow, umTableModel.findColumn("CES Points"));
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Invalid input. Please enter a valid integer for CES Points.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please select a row to edit.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = umTable.getSelectedRow();
+
+                if (selectedRow != -1) {
+                    User selectedUser = users.get(selectedRow);
+
+                    int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this record?", "Confirmation", JOptionPane.YES_NO_OPTION);
+
+                    if (dialogResult == JOptionPane.YES_OPTION) {
+                        databaseManager.deleteUser(selectedUser.getUniqueID());
+
+                        umTableModel.removeRow(selectedRow);
+                        umTable.clearSelection();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please select a row to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        searchField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String searchText = searchField.getText();
+
+                umTable.setModel(umTableModel);
+                users = databaseManager.getAllUser();
+                umTableModel.setRowCount(0);
+
+                for (User user : users) {
+                    if ("Student".equals(user.getType())) {
+                        String fullName = user.getFullName();
+                        String email = user.getEmail();
+                        String idNumber = String.valueOf(user.getIDNumber());
+
+                        if (fullName.contains(searchText) || email.contains(searchText) || idNumber.contains(searchText)) {
+                            umTableModel.addRow(new Object[]{user.getFullName(), user.getEmail(), user.getIDNumber(), ((Student) user).getYearLevel(), user.getCESPoints()});
+                        }
+                    }
+                }
+
+                umTableModel.fireTableDataChanged();
+                umTable.repaint();
             }
         });
 
@@ -434,11 +518,53 @@ public class GUI {
             }
         };
 
+        ActionListener yearLevelFilterListener = new ActionListener() {
+            /**
+             * Handles filtering the User Management table to show only users with a specific userYearLevel
+             * when a year level button is clicked. If the "All" button is clicked, it shows all students.
+             *
+             * @param e The ActionEvent triggered by clicking a year level button.
+             */
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Profile.setVisible(false);
+                UserManagement.setVisible(true);
+
+                JButton sourceButton = (JButton) e.getSource();
+                String yearLevel = sourceButton.getText();
+
+                umTable.setModel(umTableModel);
+                users = databaseManager.getAllStudents();
+                umTableModel.setRowCount(0);
+
+                if ("All".equals(yearLevel)) {
+                    users = databaseManager.getAllStudents();
+                } else {
+                    users = databaseManager.getStudentsByYearLevel(yearLevel);
+                }
+
+                umTableModel.setRowCount(0);
+
+                for (User user : users) {
+                    umTableModel.addRow(new Object[]{user.getFullName(), user.getEmail(), user.getIDNumber(), ((Student) user).getYearLevel(), user.getCESPoints()});
+                }
+
+                umTableModel.fireTableDataChanged();
+                umTable.repaint();
+            }
+        };
+
         AdminLogout.addActionListener(logoutListener);
         StudentLogout.addActionListener(logoutListener);
         beginningButton.addActionListener(selectImage);
         middleButton.addActionListener(selectImage);
         endButton.addActionListener(selectImage);
+        allButton.addActionListener(yearLevelFilterListener);
+        year1Button.addActionListener(yearLevelFilterListener);
+        year2Button.addActionListener(yearLevelFilterListener);
+        year3Button.addActionListener(yearLevelFilterListener);
+        year4Button.addActionListener(yearLevelFilterListener);
+        batchXButton.addActionListener(yearLevelFilterListener);
     }
 
     /**

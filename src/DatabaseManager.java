@@ -66,6 +66,51 @@ public class DatabaseManager {
     }
 
     /**
+     * Updates the CES points of a user in the database.
+     *
+     * @param id     The user ID.
+     * @param newCesPoints The new CES points.
+     */
+    public void updateUserCESPoints(String id, int newCesPoints) {
+        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            PreparedStatement preparedStatement = dbConnection.prepareStatement("UPDATE users SET userCESPoints = ? WHERE userID = ?");
+            preparedStatement.setInt(1, newCesPoints);
+            preparedStatement.setString(2, id);
+            int rowsUpdated = preparedStatement.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                JOptionPane.showMessageDialog(null, "CES Points updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                throw new SQLException("Failed to update CES Points in the database.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Deletes a user from the database based on their unique ID.
+     *
+     * @param id The unique ID of the user to be deleted.
+     */
+    public void deleteUser(String id) {
+        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            try (PreparedStatement deleteUserStatement = dbConnection.prepareStatement("DELETE FROM users WHERE userID = ?")) {
+                deleteUserStatement.setString(1, id);
+                int rowsDeleted = deleteUserStatement.executeUpdate();
+
+                if (rowsDeleted > 0) {
+                    JOptionPane.showMessageDialog(null, "User deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Failed to delete user.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * Checks if a given UUID already exists in the database.
      *
      * @param id The UUID to check for existence.
@@ -264,6 +309,33 @@ public class DatabaseManager {
         }
     }
 
+    public List<User> getAllStudents() {
+        List<User> users = new ArrayList<>();
+
+        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            Statement statement = dbConnection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM users");
+
+            while (resultSet.next()) {
+                String userID = resultSet.getString("userID");
+                String userName = resultSet.getString("userName");
+                String userEmail = resultSet.getString("userEmail");
+                int userIDNumber = resultSet.getInt("userIDNumber");
+                String userType = resultSet.getString("userType");
+                int userCESPoints = resultSet.getInt("userCESPoints");
+
+                if ("Student".equals(userType)) {
+                    String userYearLevel = resultSet.getString("userYearLevel");
+                    users.add(new Student(userID, userName, userEmail, userIDNumber, userType, userCESPoints, userYearLevel));
+                }
+            }
+            resultSet.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return users;
+    }
+
     /**
      * Retrieves a list of all users in the database.
      *
@@ -284,13 +356,44 @@ public class DatabaseManager {
                 String userType = resultSet.getString("userType");
                 int userCESPoints = resultSet.getInt("userCESPoints");
 
-                users.add(new User(userID, userName, userEmail, userIDNumber, userType, userCESPoints));
+                if ("Admin".equals(userType)) {
+                    users.add(new Admin(userID, userName, userEmail, userIDNumber, userType, userCESPoints));
+                } else if ("Student".equals(userType)) {
+                    String userYearLevel = resultSet.getString("userYearLevel");
+                    users.add(new Student(userID, userName, userEmail, userIDNumber, userType, userCESPoints, userYearLevel));
+                }
             }
             resultSet.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return users;
+    }
+
+    public List<User> getStudentsByYearLevel(String yearLevel) {
+        List<User> students = new ArrayList<>();
+
+        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            PreparedStatement statement = dbConnection.prepareStatement("SELECT * FROM users WHERE userType = 'Student' AND userYearLevel = ?");
+            statement.setString(1, yearLevel);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                String userID = resultSet.getString("userID");
+                String userName = resultSet.getString("userName");
+                String userEmail = resultSet.getString("userEmail");
+                int userIDNumber = resultSet.getInt("userIDNumber");
+                String userType = resultSet.getString("userType");
+                int userCESPoints = resultSet.getInt("userCESPoints");
+
+                students.add(new Student(userID, userName, userEmail, userIDNumber, userType, userCESPoints, yearLevel));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return students;
     }
 
     /**
