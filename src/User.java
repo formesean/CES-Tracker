@@ -1,32 +1,26 @@
+import java.util.ArrayList;
+
 public class User {
-    private int uniqueID;
+    private String uniqueID;
     private String fullName;
     private String email;
-    private String password;
     private int idNumber;
     private String type;
     private int cesPoints;
 
-    User(String fullName, String email, String password, int idNumber, String type, int cesPoints) {
-        this.fullName = fullName;
-        this.email = email;
-        this.password = password;
-        this.idNumber = idNumber;
-        this.type = type;
-        this.cesPoints = cesPoints;
+    public User() {
     }
 
-    User(int uniqueID, String fullName, String email, String password, int idNumber, String type, int cesPoints) {
+    User(String uniqueID, String fullName, String email, int idNumber, String type, int cesPoints) {
         this.uniqueID = uniqueID;
         this.fullName = fullName;
         this.email = email;
-        this.password = password;
         this.idNumber = idNumber;
         this.type = type;
         this.cesPoints = cesPoints;
     }
 
-    public int getUniqueID() {
+    public String getUniqueID() {
         return this.uniqueID;
     }
 
@@ -36,10 +30,6 @@ public class User {
 
     public String getEmail() {
         return this.email;
-    }
-
-    public String getPassword() {
-        return this.password;
     }
 
     public int getIDNumber() {
@@ -54,7 +44,7 @@ public class User {
         return this.cesPoints;
     }
 
-    public void setUniqueID(int uniqueID) {
+    public void setUniqueID(String uniqueID) {
         this.uniqueID = uniqueID;
     }
 
@@ -64,10 +54,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public void setIdNumber(int idNumber) {
