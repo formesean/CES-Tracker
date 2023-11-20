@@ -7,8 +7,10 @@ public class Event {
     private String endTime;
     private String type;
     private String mode;
+    private String roles;
+    private String rolePoints;
 
-    Event(String uniqueID, String name, String location, String date, String startTime, String endTime, String type, String mode) {
+    Event(String uniqueID, String name, String location, String date, String startTime, String endTime, String type, String mode, String roles, String rolePoints) {
         this.uniqueID = uniqueID;
         this.name = name;
         this.location = location;
@@ -17,6 +19,8 @@ public class Event {
         this.endTime = endTime;
         this.type = type;
         this.mode = mode;
+        this.roles = roles;
+        this.rolePoints = rolePoints;
     }
 
     public String getUniqueID() {
@@ -81,5 +85,21 @@ public class Event {
 
     public void setMode(String mode) {
         this.mode = mode;
+    }
+
+    public String getRoles() {
+        return this.roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
+    public String getRolePoints() {
+        return this.rolePoints;
+    }
+
+    public void setRolePoints(String rolePoints) {
+        this.rolePoints = rolePoints;
     }
 }

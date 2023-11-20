@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javax.swing.*;
@@ -14,30 +15,12 @@ public class DatabaseManager {
     private String jdbcPassword;
     private Controller controller = new Controller();
 
-    /**
-     * Creates a new DatabaseManager instance with the given database connection details.
-     *
-     * @param jdbcUrl      The JDBC URL of the database.
-     * @param jdbcUsername The username for the database connection.
-     * @param jdbcPassword The password for the database connection.
-     */
     public DatabaseManager(String jdbcUrl, String jdbcUsername, String jdbcPassword) {
         this.jdbcUrl = jdbcUrl;
         this.jdbcUsername = jdbcUsername;
         this.jdbcPassword = jdbcPassword;
     }
 
-    /**
-     * Inserts a new user into the database.
-     *
-     * @param id = The unique ID of the user.
-     * @param fullName = The full name of the user.
-     * @param email = The email of the user.
-     * @param password = The password of the user.
-     * @param idNumber = The ID number of the user.
-     * @param type = The user type.
-     * @param cesPoints = The CES points of the user.
-     */
     public void insertUserData(String id, String fullName, String email, String password, int idNumber, String type, int cesPoints) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             if (isEmailExists(email) && isIDNumberExists(idNumber)) {
@@ -66,24 +49,13 @@ public class DatabaseManager {
         }
     }
 
-    /**
-     * Inserts a new event into the database.
-     *
-     * @param eventName    The name of the event.
-     * @param eventLocation The location of the event.
-     * @param eventDate     The date of the event.
-     * @param startTime     The start time of the event.
-     * @param endTime     The end time of the event.
-     * @param eventType     The type of the event.
-     * @param eventMode     The mode of the event.
-     */
-    public void insertEventData(String eventID, String eventName, String eventLocation, String eventDate, String startTime, String endTime, String eventType, String eventMode) {
+    public void insertEventData(String eventID, String eventName, String eventLocation, String eventDate, String startTime, String endTime, String eventType, String eventMode, String roles, String rolePoints) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
             Time startTimeValue = new Time(timeFormat.parse(startTime).getTime());
             Time endTimeValue = new Time(timeFormat.parse(endTime).getTime());
 
-            PreparedStatement preparedStatement = dbConnection.prepareStatement("INSERT INTO events (eventID, eventName, eventLocation, eventDate, startTime, endTime, eventType, eventMode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            PreparedStatement preparedStatement = dbConnection.prepareStatement("INSERT INTO events (eventID, eventName, eventLocation, eventDate, startTime, endTime, eventType, eventMode, roles, rolePoints) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             preparedStatement.setString(1, eventID);
             preparedStatement.setString(2, eventName);
             preparedStatement.setString(3, eventLocation);
@@ -92,34 +64,19 @@ public class DatabaseManager {
             preparedStatement.setTime(6, endTimeValue);
             preparedStatement.setString(7, eventType);
             preparedStatement.setString(8, eventMode);
+            preparedStatement.setString(9, roles);
+            preparedStatement.setString(10, rolePoints);
+            preparedStatement.executeUpdate();
 
-            int rowsInserted = preparedStatement.executeUpdate();
-
-            if (rowsInserted > 0) {
-                JOptionPane.showMessageDialog(null, "Event added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                throw new SQLException("Failed to insert event into the database.");
-            }
+            JOptionPane.showMessageDialog(null, "Event added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Failed to insert event into the database.\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    /**
-     * Inserts a new evaluation form into the database.
-     *
-     * @param evalformID   The unique ID of the evaluation form.
-     * @param userID       The user ID associated with the evaluation form.
-     * @param eventID      The event ID associated with the evaluation form.
-     * @param qOne         The response to the first question.
-     * @param qTwo         The response to the second question.
-     * @param beginningImg The image associated with the beginning of the event.
-     * @param middleImg    The image associated with the middle of the event.
-     * @param endImg       The image associated with the end of the event.
-     */
-    public void insertEvalForm(String evalformID, String userID, String eventID, String qOne, String qTwo, String qThree, String qFour, String qFive, String rating, ImageIcon beginningImg, ImageIcon middleImg, ImageIcon endImg) {
+    public void insertEvalForm(String evalformID, String userID, String eventID, String qOne, String qTwo, String qThree, String qFour, String qFive, String role, int rolePoints, String rating, ImageIcon beginningImg, ImageIcon middleImg, ImageIcon endImg) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
-            PreparedStatement statement = dbConnection.prepareStatement("INSERT INTO evalform (evalformID, userID, eventID, qOne, qTwo, qThree, qFour, qFive, rating, beginningImg, middleImg, endImg, submitted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            PreparedStatement statement = dbConnection.prepareStatement("INSERT INTO evalform (evalformID, userID, eventID, qOne, qTwo, qThree, qFour, qFive, role, rolePoints, rating, beginningImg, middleImg, endImg, submitted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
             Timestamp submitted_at = new Timestamp(new Date().getTime());
             byte[] beginningImgBytes = controller.convertImageIconToBytes(beginningImg);
@@ -134,11 +91,13 @@ public class DatabaseManager {
             statement.setString(6, qThree);
             statement.setString(7, qFour);
             statement.setString(8, qFive);
-            statement.setString(9, rating);
-            statement.setBytes(10, beginningImgBytes);
-            statement.setBytes(11, middleImgBytes);
-            statement.setBytes(12, endImgBytes);
-            statement.setTimestamp(13, submitted_at);
+            statement.setString(9, role);
+            statement.setInt(10, rolePoints);
+            statement.setString(11, rating);
+            statement.setBytes(12, beginningImgBytes);
+            statement.setBytes(13, middleImgBytes);
+            statement.setBytes(14, endImgBytes);
+            statement.setTimestamp(15, submitted_at);
             int rowsInserted = statement.executeUpdate();
 
             if (rowsInserted > 0) {
@@ -151,13 +110,6 @@ public class DatabaseManager {
         }
     }
 
-
-    /**
-     * Updates the CES points of a user in the database.
-     *
-     * @param id     The user ID.
-     * @param newCesPoints The new CES points.
-     */
     public void updateUserCESPoints(String id, int newCesPoints) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             PreparedStatement preparedStatement = dbConnection.prepareStatement("UPDATE users SET userCESPoints = ? WHERE userID = ?");
@@ -175,11 +127,6 @@ public class DatabaseManager {
         }
     }
 
-    /**
-     * Deletes a user from the database based on their unique ID.
-     *
-     * @param id The unique ID of the user to be deleted.
-     */
     public void deleteUser(String id) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             try (PreparedStatement deleteUserStatement = dbConnection.prepareStatement("DELETE FROM users WHERE userID = ?")) {
@@ -197,34 +144,31 @@ public class DatabaseManager {
         }
     }
 
-    /**
-     * Checks if a given UUID already exists in the database.
-     *
-     * @param id The UUID to check for existence.
-     * @return True if the UUID exists, false otherwise.
-     * @throws SQLException If an SQL exception occurs during database access.
-     */
-    public boolean isUUIDExists(String id) throws SQLException {
+    public void deleteEvalForm(String evalformID) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
-            PreparedStatement statement = dbConnection.prepareStatement("SELECT COUNT(*) FROM users WHERE userID = ?");
-            statement.setString(1, id);
-
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-                return resultSet.getInt(1) > 0;
+            try (PreparedStatement deleteEvalFormStatement = dbConnection.prepareStatement("DELETE FROM evalform WHERE evalformID = ?")) {
+                deleteEvalFormStatement.setString(1, evalformID);
+                deleteEvalFormStatement.executeUpdate();
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return false;
     }
 
-    /**
-     * Checks if a given email already exists in the database.
-     *
-     * @param email The email to check for existence.
-     * @return True if the email exists, false otherwise.
-     * @throws SQLException If an SQL exception occurs during database access.
-     */
+//    public boolean isUUIDExists(String id) throws SQLException {
+//        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+//            PreparedStatement statement = dbConnection.prepareStatement("SELECT COUNT(*) FROM users WHERE userID = ?");
+//            statement.setString(1, id);
+//
+//            ResultSet resultSet = statement.executeQuery();
+//
+//            if (resultSet.next()) {
+//                return resultSet.getInt(1) > 0;
+//            }
+//        }
+//        return false;
+//    }
+
     public boolean isEmailExists(String email) throws SQLException {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             PreparedStatement statement = dbConnection.prepareStatement("SELECT COUNT(*) FROM users WHERE userEmail = ?");
@@ -239,13 +183,6 @@ public class DatabaseManager {
         return false;
     }
 
-    /**
-     * Checks if a given ID number already exists in the database.
-     *
-     * @param idNumber The ID number to check for existence.
-     * @return True if the ID number exists, false otherwise.
-     * @throws SQLException If an SQL exception occurs during database access.
-     */
     public boolean isIDNumberExists(int idNumber) throws SQLException {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             PreparedStatement statement = dbConnection.prepareStatement("SELECT COUNT(*) FROM users WHERE userIDNumber = ?");
@@ -260,12 +197,6 @@ public class DatabaseManager {
         return false;
     }
 
-    /**
-     * Checks if a given email corresponds to an admin user.
-     *
-     * @param email The email to check.
-     * @return True if the email corresponds to an admin, false otherwise.
-     */
     public boolean isAdminEmail(String email) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             PreparedStatement statement = dbConnection.prepareStatement("SELECT * FROM admins WHERE adminEmail = ?");
@@ -282,14 +213,6 @@ public class DatabaseManager {
         return false;
     }
 
-    /**
-     * Authenticates a user based on their email and password.
-     *
-     * @param email    The email of the user.
-     * @param password The password of the user.
-     * @return True if authentication is successful, false otherwise.
-     * @throws SQLException If an SQL exception occurs during database access.
-     */
     public boolean authenticateUser(String email, String password) throws SQLException {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             PreparedStatement statement = dbConnection.prepareStatement("SELECT userPassword FROM users WHERE userEmail = ?");
@@ -307,13 +230,6 @@ public class DatabaseManager {
         return false;
     }
 
-    /**
-     * Retrieves the user ID associated with a given email.
-     *
-     * @param email The email for which to retrieve the user ID.
-     * @return The user ID associated with the email.
-     * @throws RuntimeException If an exception occurs during database access.
-     */
     public String getUserID(String email) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             PreparedStatement statement = dbConnection.prepareStatement("SELECT userID FROM users WHERE userEmail = ?");
@@ -330,12 +246,22 @@ public class DatabaseManager {
         return "";
     }
 
-    /**
-     * Retrieves a User object based on the user ID.
-     *
-     * @param id The user ID.
-     * @return A User object representing the user with the given ID.
-     */
+    public int getUserCESPoints(String id) {
+        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            try (PreparedStatement statement = dbConnection.prepareStatement("SELECT * FROM users WHERE userID = ?")) {
+                statement.setString(1, id);
+                ResultSet resultSet = statement.executeQuery();
+
+                if (resultSet.next()) {
+                    return resultSet.getInt("userCESPoints");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
+
     public User getUser(String id) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             try (PreparedStatement statement = dbConnection.prepareStatement("SELECT * FROM users WHERE userID = ?")) {
@@ -373,12 +299,6 @@ public class DatabaseManager {
         return null;
     }
 
-    /**
-     * Updates the year level of a user.
-     *
-     * @param id        The user ID.
-     * @param yearLevel The new year level.
-     */
     public void setYearLevel(String id, String yearLevel) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             PreparedStatement preparedStatement = dbConnection.prepareStatement("UPDATE users SET userYearLevel = ? WHERE userID = ?");
@@ -423,11 +343,6 @@ public class DatabaseManager {
         return users;
     }
 
-    /**
-     * Retrieves a list of all users in the database.
-     *
-     * @return A list of User objects representing all users in the database.
-     */
     public List<User> getAllUser() {
         List<User> users = new ArrayList<>();
 
@@ -523,6 +438,29 @@ public class DatabaseManager {
         return eventName;
     }
 
+    public int getRolePoints(String eventID, String role) {
+        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            try (PreparedStatement preparedStatement = dbConnection.prepareStatement("SELECT roles, rolePoints FROM events WHERE eventID = ?")) {
+                preparedStatement.setString(1, eventID);
+
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    String[] rolesArray = resultSet.getString("roles").split(",");
+                    String[] rolePointsArray = resultSet.getString("rolePoints").split(",");
+
+                    int roleIndex = Arrays.asList(rolesArray).indexOf(role);
+
+                    if (roleIndex != -1 && roleIndex < rolePointsArray.length) {
+                        return Integer.parseInt(rolePointsArray[roleIndex]);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
+
     public List<Event> getAllEvents() {
         List<Event> events = new ArrayList<>();
 
@@ -539,8 +477,10 @@ public class DatabaseManager {
                 Time endTime = resultSet.getTime("endTime");
                 String eventType = resultSet.getString("eventType");
                 String eventMode = resultSet.getString("eventMode");
+                String roles = resultSet.getString("roles");
+                String rolePoints = resultSet.getString("rolePoints");
 
-                events.add(new Event(eventID, eventName, eventLocation, eventDate.toString(), startTime.toString(), endTime.toString(), eventType, eventMode));
+                events.add(new Event(eventID, eventName, eventLocation, eventDate.toString(), startTime.toString(), endTime.toString(), eventType, eventMode, roles, rolePoints));
             }
             resultSet.close();
         } catch (SQLException e) {
@@ -549,11 +489,6 @@ public class DatabaseManager {
         return events;
     }
 
-    /**
-     * Retrieves a list of all evaluation form data in the database.
-     *
-     * @return A list of EvaluationForm objects representing all evaluation forms in the database.
-     */
     public List<EvaluationForm> getAllEvalFormData() {
         List<EvaluationForm> evalFormDataList = new ArrayList<>();
 
@@ -570,6 +505,8 @@ public class DatabaseManager {
                 String qThree = resultSet.getString("qThree");
                 String qFour = resultSet.getString("qFour");
                 String qFive = resultSet.getString("qFive");
+                String role = resultSet.getString("role");
+                String rolePoints = resultSet.getString("rolePoints");
                 String rating = resultSet.getString("rating");
                 byte[] beginningImgBytes = resultSet.getBytes("beginningImg");
                 byte[] middleImgBytes = resultSet.getBytes("middleImg");
@@ -580,7 +517,7 @@ public class DatabaseManager {
                 ImageIcon middleImg = controller.convertBytesToImageIcon(middleImgBytes);
                 ImageIcon endImg = controller.convertBytesToImageIcon(endImgBytes);
 
-                evalFormDataList.add(new EvaluationForm(evalformID, userID, eventID, qOne, qTwo, qThree, qFour, qFive, rating, beginningImg, middleImg, endImg, submitted_at));
+                evalFormDataList.add(new EvaluationForm(evalformID, userID, eventID, qOne, qTwo, qThree, qFour, qFive, role, rolePoints, rating, beginningImg, middleImg, endImg, submitted_at));
             }
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
@@ -603,6 +540,8 @@ public class DatabaseManager {
                     String qThree = resultSet.getString("qThree");
                     String qFour = resultSet.getString("qFour");
                     String qFive = resultSet.getString("qFive");
+                    String role = resultSet.getString("role");
+                    String rolePoints = resultSet.getString("rolePoints");
                     String rating = resultSet.getString("rating");
                     byte[] beginningImgBytes = resultSet.getBytes("beginningImg");
                     byte[] middleImgBytes = resultSet.getBytes("middleImg");
@@ -613,7 +552,7 @@ public class DatabaseManager {
                     ImageIcon middleImg = controller.convertBytesToImageIcon(middleImgBytes);
                     ImageIcon endImg = controller.convertBytesToImageIcon(endImgBytes);
 
-                    return new EvaluationForm(evalformID, userID, eventID, qOne, qTwo, qThree, qFour, qFive, rating, beginningImg, middleImg, endImg, submitted_at);
+                    return new EvaluationForm(evalformID, userID, eventID, qOne, qTwo, qThree, qFour, qFive, role, rolePoints, rating, beginningImg, middleImg, endImg, submitted_at);
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -624,12 +563,6 @@ public class DatabaseManager {
         return null;
     }
 
-    /**
-     * Changes the password of a user in the database.
-     *
-     * @param userId            The user ID for which to change the password.
-     * @param encryptedPassword The new encrypted password.
-     */
     public void changePassword(String userId, String encryptedPassword) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             PreparedStatement preparedStatement = dbConnection.prepareStatement("UPDATE users SET userPassword = ? WHERE userID = ?");

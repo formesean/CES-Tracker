@@ -7,11 +7,15 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class GUI {
@@ -117,6 +121,15 @@ public class GUI {
     private JRadioButton veR4;
     private JRadioButton veR5;
     private JScrollPane veScrollPane;
+    private JTextField role1Field;
+    private JTextField role1Points;
+    private JPanel role1Panel;
+    private JPanel dashboardLeftPanel;
+    private JPanel role2Panel;
+    private JTextField role2Field;
+    private JTextField role2Points;
+    private JComboBox rolesBox;
+    private JLabel roleTitleField;
 
     private DefaultTableModel umTableModel;
     private DefaultTableModel eventsTableModel;
@@ -133,6 +146,7 @@ public class GUI {
     private List<Event> events;
     private List<EvaluationForm> evalFormDataList;
     private User loggedUser;
+    private int roleCounter = 1;
 
     GUI() {
         databaseManager = new DatabaseManager("jdbc:mysql://localhost:3306/oop", "root", "");
@@ -141,7 +155,7 @@ public class GUI {
         JFrame frame = new JFrame("CES TRACKER");
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1050, 650);
+        frame.setSize(1350, 750);
         frame.setResizable(false);
 
         frame.add(MainWindow);
@@ -212,22 +226,7 @@ public class GUI {
 
         performAutoLogin();
 
-        // fetch eval form
-//        evalFormDataList = databaseManager.getAllEvalFormData();
-//        if (!evalFormDataList.isEmpty()) {
-//            EvaluationForm firstEvalFormData = evalFormDataList.get(0);
-//            bImg.setIcon(firstEvalFormData.getBeginningImg());
-//        } else {
-//            bImg.setIcon(null);
-//        }
-
         signUpButton.addActionListener(new ActionListener() {
-            /**
-             * Performs user account creation when the button is clicked.
-             * Generates a unique ID, collects user input, and inserts data into the database.
-             *
-             * @param e The ActionEvent triggered by clicking the "Sign Up" button.
-             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 UUID uuid = UUID.randomUUID();
@@ -245,12 +244,6 @@ public class GUI {
         });
 
         goToLogIn.addActionListener(new ActionListener() {
-            /**
-             * Switches to the login panel when the button is clicked.
-             * Clears input fields for a fresh login attempt.
-             *
-             * @param e The ActionEvent triggered by clicking the button.
-             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 clearTextFields();
@@ -262,12 +255,6 @@ public class GUI {
         });
 
         goToSignUp.addActionListener(new ActionListener() {
-            /**
-             * Switches to the signup panel when the button is clicked.
-             * Clears input fields for a fresh registration attempt.
-             *
-             * @param e The ActionEvent triggered by clicking the button.
-             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 clearTextFields();
@@ -366,22 +353,45 @@ public class GUI {
                 eventsBox.removeAllItems();
                 eventsBox.addItem("Select Event Name");
 
+                rolesBox.removeAllItems();
+                rolesBox.addItem("Select Role");
+
                 for (Event event : events) {
                     eventsBox.addItem(event.getName());
                 }
 
                 eventsBox.setSelectedIndex(0);
+
+                eventsBox.addItemListener(new ItemListener() {
+                    @Override
+                    public void itemStateChanged(ItemEvent e) {
+                        if (e.getStateChange() == ItemEvent.SELECTED) {
+                            rolesBox.removeAllItems();
+                            rolesBox.addItem("Select Role");
+
+                            String selectedEventName = (String) eventsBox.getSelectedItem();
+                            Event selectedEvent = null;
+
+                            for (Event event : events) {
+                                if (event.getName().equals(selectedEventName)) {
+                                    selectedEvent = event;
+                                    break;
+                                }
+                            }
+
+                            if (selectedEvent != null) {
+                                String[] eventRoles = selectedEvent.getRoles().split(",");
+                                for (String role : eventRoles) {
+                                    rolesBox.addItem(role.trim());
+                                }
+                            }
+                        }
+                    }
+                });
             }
         });
 
         submitEvalFormBtn.addActionListener(new ActionListener() {
-            /**
-             * Handles the submission of the evaluation form when the "Submit" button is clicked.
-             * Reads user input, retrieves logged-in user information, and inserts the evaluation form data into the database.
-             * Displays an error message if any required information is missing.
-             *
-             * @param e The ActionEvent triggered by clicking the "Submit" button.
-             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -399,13 +409,15 @@ public class GUI {
                     String qThree = q3TxtF.getText();
                     String qFour = q4TxtF.getText();
                     String qFive = q5TxtF.getText();
+                    String role = (String) rolesBox.getSelectedItem();
+                    int rolePoints = databaseManager.getRolePoints(eventID, role);
                     String rating = getSelectedRadioValue();
                     ImageIcon beginningImg = (ImageIcon) beginningImage.getIcon();
                     ImageIcon middleImg = (ImageIcon) middleImage.getIcon();
                     ImageIcon endImg = (ImageIcon) endImage.getIcon();
 
                     if (beginningImg != null && middleImg != null && endImg != null) {
-                        databaseManager.insertEvalForm(evalformID, id, eventID, qOne, qTwo, qThree, qFour, qFive, rating, beginningImg, middleImg, endImg);
+                        databaseManager.insertEvalForm(evalformID, id, eventID, qOne, qTwo, qThree, qFour, qFive, role, rolePoints, rating, beginningImg, middleImg, endImg);
                     } else {
                         JOptionPane.showMessageDialog(null, "Please select images for all three categories.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -430,6 +442,9 @@ public class GUI {
                 for (Event event :events) {
                     eventsTableModel.addRow(new Object[]{event.getName(), event.getLocation(), event.getDate(), event.getType()});
                 }
+
+                eventsTableModel.fireTableDataChanged();
+                eventsTable.repaint();
             }
         });
 
@@ -462,18 +477,25 @@ public class GUI {
                 String endTime = endTimeField.getText();
                 String eventType = eventTypeTxtF.getText();
                 String eventMode = eventModeTxtF.getText();
+                String roles = role1Field.getText() + "," + role2Field.getText();
+                String rolePoints = role1Points.getText() + "," + role2Points.getText();
 
-                databaseManager.insertEventData(eventID, eventName, eventLocation, eventDate, startTime, endTime, eventType, eventMode);
+                databaseManager.insertEventData(eventID, eventName, eventLocation, eventDate, startTime, endTime, eventType, eventMode, roles, rolePoints);
+
+                eventsTable.setModel(eventsTableModel);
+                events = databaseManager.getAllEvents();
+                eventsTableModel.setRowCount(0);
+
+                for (Event event :events) {
+                    eventsTableModel.addRow(new Object[]{event.getName(), event.getLocation(), event.getDate(), event.getType()});
+                }
+
+                eventsTableModel.fireTableDataChanged();
+                eventsTable.repaint();
             }
         });
 
         userManangementButton.addActionListener(new ActionListener() {
-            /**
-             * Handles the navigation to the User Management panel when the "User Management" button is clicked.
-             * Retrieves user data from the database and populates the User Management table.
-             *
-             * @param e The ActionEvent triggered by clicking the "User Management" button.
-             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 Profile.setVisible(false);
@@ -613,6 +635,7 @@ public class GUI {
                     veQ4.setText(viewedForm.getQFour());
                     veQ5.setText(viewedForm.getQFive());
                     setRatingInButtonGroup(viewedForm.getRating());
+                    roleTitleField.setText(viewedForm.getRole());
                     bImg.setIcon(viewedForm.getBeginningImg());
                     mImg.setIcon(viewedForm.getMiddleImg());
                     eImg.setIcon(viewedForm.getEndImg());
@@ -623,7 +646,7 @@ public class GUI {
                     veQ3.setEditable(false);
                     veQ4.setEditable(false);
                     veQ5.setEditable(false);
-
+                    roleTitleField.setEnabled(false);
                     veR1.setEnabled(false);
                     veR2.setEnabled(false);
                     veR3.setEnabled(false);
@@ -631,6 +654,76 @@ public class GUI {
                     veR5.setEnabled(false);
                 } else {
                     JOptionPane.showMessageDialog(null, "Please select a row to view.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        approveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = approvalTable.getSelectedRow();
+
+                if (selectedRow != -1) {
+                    EvaluationForm selectedForm = evalFormDataList.get(selectedRow);
+                    int pointsGained = Integer.parseInt(selectedForm.getRolePoints());
+                    int currentPoints = databaseManager.getUserCESPoints(selectedForm.getUserID());
+                    int newCesPoints = currentPoints + pointsGained;
+
+                    databaseManager.updateUserCESPoints(selectedForm.getUserID(), newCesPoints);
+                    databaseManager.deleteEvalForm(selectedForm.getEvalformID());
+
+                    approvalTable.setModel(approvalTableModel);
+                    evalFormDataList = databaseManager.getAllEvalFormData();
+                    approvalTableModel.setRowCount(0);
+
+                    for (EvaluationForm evalFormData : evalFormDataList) {
+                        String userName = databaseManager.getUserName(evalFormData.getUserID());
+                        String eventName = databaseManager.getEventName(evalFormData.getEventID());
+                        String submitted_atDate = dateFormat.format(evalFormData.getSubmitted_at());
+
+                        approvalTableModel.addRow(new Object[]{userName, eventName, submitted_atDate});
+                    }
+
+                    approvalTableModel.fireTableDataChanged();
+                    approvalTable.repaint();
+
+                    ViewEvalForm.setVisible(false);
+                    Approval.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please select a row to approve.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        declineButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = approvalTable.getSelectedRow();
+
+                if (selectedRow != -1) {
+                    EvaluationForm selectedForm = evalFormDataList.get(selectedRow);
+
+                    databaseManager.deleteEvalForm(selectedForm.getEvalformID());
+
+                    approvalTable.setModel(approvalTableModel);
+                    evalFormDataList = databaseManager.getAllEvalFormData();
+                    approvalTableModel.setRowCount(0);
+
+                    for (EvaluationForm evalFormData : evalFormDataList) {
+                        String userName = databaseManager.getUserName(evalFormData.getUserID());
+                        String eventName = databaseManager.getEventName(evalFormData.getEventID());
+                        String submitted_atDate = dateFormat.format(evalFormData.getSubmitted_at());
+
+                        approvalTableModel.addRow(new Object[]{userName, eventName, submitted_atDate});
+                    }
+
+                    approvalTableModel.fireTableDataChanged();
+                    approvalTable.repaint();
+
+                    ViewEvalForm.setVisible(false);
+                    Approval.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please select a row to approve.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -644,12 +737,6 @@ public class GUI {
         });
 
         setYrLvlBtn.addActionListener(new ActionListener() {
-            /**
-             * Handles setting the year level for a student when the "Set Year Level" button is clicked.
-             * Displays a dialog for year level selection and updates the user's year level in the database.
-             *
-             * @param e The ActionEvent triggered by clicking the "Set Year Level" button.
-             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (loggedUser != null && "Student".equals(loggedUser.getType())) {
@@ -669,12 +756,6 @@ public class GUI {
         });
 
         changePass.addActionListener(new ActionListener() {
-            /**
-             * Handles the change password functionality when the "Change Password" button is clicked.
-             * Prompts the user for a new password and updates the password in the database.
-             *
-             * @param e The ActionEvent triggered by clicking the "Change Password" button.
-             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 JPasswordField passwordField = new JPasswordField();
@@ -702,12 +783,6 @@ public class GUI {
         });
 
         ActionListener logoutListener = new ActionListener() {
-            /**
-             * Handles user logout when the "Logout" button is clicked.
-             * Switches panels to the login screen, clears the logged-in user data, and resets the stored user file.
-             *
-             * @param e The ActionEvent triggered by clicking the "Logout" button.
-             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 SignUpTitle.setVisible(false);
@@ -733,13 +808,6 @@ public class GUI {
         };
 
         ActionListener selectImage = new ActionListener() {
-            /**
-             * Handles image selection when one of the image selection buttons (Beginning, Middle, End) is clicked.
-             * Displays a file chooser, allowing the user to select an image file.
-             * Resizes the selected image and sets it as an icon for the corresponding image label.
-             *
-             * @param e The ActionEvent triggered by clicking one of the image selection buttons.
-             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 JButton sourceBtn = (JButton) e.getSource();
@@ -772,12 +840,6 @@ public class GUI {
         };
 
         ActionListener yearLevelFilterListener = new ActionListener() {
-            /**
-             * Handles filtering the User Management table to show only users with a specific userYearLevel
-             * when a year level button is clicked. If the "All" button is clicked, it shows all students.
-             *
-             * @param e The ActionEvent triggered by clicking a year level button.
-             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 Profile.setVisible(false);
@@ -820,11 +882,6 @@ public class GUI {
         batchXButton.addActionListener(yearLevelFilterListener);
     }
 
-    /**
-     * Performs automatic login if a user is logged in.
-     * Reads the stored user file, retrieves the user's ID, and displays the appropriate panels based on the user type.
-     * Handles the transition to the main profile screen for Admin or Student users.
-     */
     private void performAutoLogin() {
         try (BufferedReader reader = new BufferedReader(new FileReader("loggedUser.txt"));) {
             String userID = reader.readLine();
@@ -867,11 +924,6 @@ public class GUI {
         emailField.setText("");
     }
 
-    /**
-     * Updates the labels in the profile with the logged-in user's information.
-     *
-     * @param id The unique ID of the logged-in user.
-     */
     private void updateLoggedInUserInfoLabels(String id) {
         User userProfile = databaseManager.getUser(id);
 

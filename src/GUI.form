@@ -467,7 +467,7 @@
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <grid id="f66a0" layout-manager="GridLayoutManager" row-count="18" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                      <grid id="f66a0" layout-manager="GridLayoutManager" row-count="20" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="50" left="50" bottom="50" right="50"/>
                         <constraints/>
                         <properties/>
@@ -521,7 +521,7 @@
                           </component>
                           <component id="5c5fa" class="javax.swing.JLabel">
                             <constraints>
-                              <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties>
                               <text value="Documentation"/>
@@ -529,7 +529,7 @@
                           </component>
                           <component id="c4c4f" class="javax.swing.JButton" binding="submitEvalFormBtn">
                             <constraints>
-                              <grid row="17" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                              <grid row="19" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties>
                               <text value="submit"/>
@@ -561,7 +561,7 @@
                           </component>
                           <component id="56c81" class="javax.swing.JLabel">
                             <constraints>
-                              <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties>
                               <text value="Please check your overall rating to this CES exposure activity"/>
@@ -593,7 +593,7 @@
                           </component>
                           <grid id="f894" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="3">
                             <constraints>
-                              <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                              <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties/>
                             <border type="none"/>
@@ -632,7 +632,7 @@
                           </grid>
                           <grid id="56d89" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
                             <constraints>
-                              <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                              <grid row="17" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties/>
                             <border type="none"/>
@@ -659,7 +659,7 @@
                           </grid>
                           <grid id="c7840" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
                             <constraints>
-                              <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                              <grid row="18" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties/>
                             <border type="none"/>
@@ -684,6 +684,20 @@
                               </component>
                             </children>
                           </grid>
+                          <component id="bc5c5" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="Role in the Activity"/>
+                            </properties>
+                          </component>
+                          <component id="b3819" class="javax.swing.JComboBox" binding="rolesBox">
+                            <constraints>
+                              <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                          </component>
                         </children>
                       </grid>
                     </children>
@@ -823,7 +837,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <grid id="99576" layout-manager="GridLayoutManager" row-count="9" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="99576" binding="dashboardLeftPanel" layout-manager="GridLayoutManager" row-count="11" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -905,7 +919,7 @@
                   </component>
                   <component id="5b5c7" class="javax.swing.JButton" binding="addEventButton">
                     <constraints>
-                      <grid row="8" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="10" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="Submit"/>
@@ -965,6 +979,72 @@
                       <text value="End Time"/>
                     </properties>
                   </component>
+                  <component id="b01c2" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Roles"/>
+                    </properties>
+                  </component>
+                  <grid id="95445" binding="role1Panel" layout-manager="FlowLayout" hgap="0" vgap="5" flow-align="0">
+                    <constraints>
+                      <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="302b7" class="javax.swing.JTextField" binding="role1Field">
+                        <constraints/>
+                        <properties>
+                          <minimumSize width="-1" height="-1"/>
+                          <preferredSize width="100" height="20"/>
+                        </properties>
+                      </component>
+                      <component id="a9478" class="javax.swing.JLabel">
+                        <constraints/>
+                        <properties>
+                          <text value="        Points to be Given    "/>
+                        </properties>
+                      </component>
+                      <component id="c840b" class="javax.swing.JTextField" binding="role1Points">
+                        <constraints/>
+                        <properties>
+                          <minimumSize width="-1" height="-1"/>
+                          <preferredSize width="100" height="20"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                  <grid id="f53d5" binding="role2Panel" layout-manager="FlowLayout" hgap="0" vgap="5" flow-align="0">
+                    <constraints>
+                      <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="dee99" class="javax.swing.JTextField" binding="role2Field">
+                        <constraints/>
+                        <properties>
+                          <minimumSize width="-1" height="-1"/>
+                          <preferredSize width="100" height="20"/>
+                        </properties>
+                      </component>
+                      <component id="a2a4b" class="javax.swing.JLabel">
+                        <constraints/>
+                        <properties>
+                          <text value="        Points to be Given    "/>
+                        </properties>
+                      </component>
+                      <component id="323c8" class="javax.swing.JTextField" binding="role2Points">
+                        <constraints/>
+                        <properties>
+                          <minimumSize width="-1" height="-1"/>
+                          <preferredSize width="100" height="20"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
                 </children>
               </grid>
               <grid id="b67f6" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -1054,7 +1134,7 @@
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <grid id="bf218" layout-manager="GridLayoutManager" row-count="17" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                      <grid id="bf218" layout-manager="GridLayoutManager" row-count="18" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="50" left="50" bottom="50" right="50"/>
                         <constraints/>
                         <properties/>
@@ -1094,7 +1174,7 @@
                           </component>
                           <component id="3602a" class="javax.swing.JLabel">
                             <constraints>
-                              <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties>
                               <text value="Documentation"/>
@@ -1126,7 +1206,7 @@
                           </component>
                           <component id="31e0a" class="javax.swing.JLabel">
                             <constraints>
-                              <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties>
                               <text value="Please check your overall rating to this CES exposure activity"/>
@@ -1158,7 +1238,7 @@
                           </component>
                           <grid id="f68ca" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="3">
                             <constraints>
-                              <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                              <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties/>
                             <border type="none"/>
@@ -1212,7 +1292,7 @@
                           </grid>
                           <grid id="3be40" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="4">
                             <constraints>
-                              <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                              <grid row="17" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties/>
                             <border type="none"/>
@@ -1241,7 +1321,7 @@
                           </component>
                           <grid id="4367f" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
                             <constraints>
-                              <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                              <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties/>
                             <border type="none"/>
@@ -1266,6 +1346,14 @@
                               </component>
                             </children>
                           </grid>
+                          <component id="a53ee" class="javax.swing.JLabel" binding="roleTitleField">
+                            <constraints>
+                              <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value=""/>
+                            </properties>
+                          </component>
                         </children>
                       </grid>
                     </children>

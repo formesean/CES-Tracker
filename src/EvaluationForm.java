@@ -10,13 +10,15 @@ public class EvaluationForm {
     private String qThree;
     private String qFour;
     private String qFive;
+    private String role;
+    private String rolePoints;
     private String rating;
     private ImageIcon beginningImg;
     private ImageIcon middleImg;
     private ImageIcon endImg;
     private Timestamp submitted_at;
 
-    public EvaluationForm(String evalformID, String userID, String eventID, String qOne, String qTwo, String qThree, String qFour, String qFive, String rating, ImageIcon beginningImg, ImageIcon middleImg, ImageIcon endImg, Timestamp submitted_at) {
+    public EvaluationForm(String evalformID, String userID, String eventID, String qOne, String qTwo, String qThree, String qFour, String qFive, String role, String rolePoints,String rating, ImageIcon beginningImg, ImageIcon middleImg, ImageIcon endImg, Timestamp submitted_at) {
         this.evalformID = evalformID;
         this.userID = userID;
         this.eventID = eventID;
@@ -25,6 +27,8 @@ public class EvaluationForm {
         this.qThree = qThree;
         this.qFour = qFour;
         this.qFive = qFive;
+        this.role = role;
+        this.rolePoints = rolePoints;
         this.rating = rating;
         this.beginningImg = beginningImg;
         this.middleImg = middleImg;
@@ -62,6 +66,14 @@ public class EvaluationForm {
 
     public String getQFive() {
         return qFive;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public String getRolePoints() {
+        return rolePoints;
     }
 
     public String getRating() {
