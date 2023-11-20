@@ -2,6 +2,7 @@ import org.jasypt.util.password.StrongPasswordEncryptor;
 
 import java.io.IOException;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,6 +63,45 @@ public class DatabaseManager {
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Failed to insert user into the database.\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Inserts a new event into the database.
+     *
+     * @param eventName    The name of the event.
+     * @param eventLocation The location of the event.
+     * @param eventDate     The date of the event.
+     * @param startTime     The start time of the event.
+     * @param endTime     The end time of the event.
+     * @param eventType     The type of the event.
+     * @param eventMode     The mode of the event.
+     */
+    public void insertEventData(String eventID, String eventName, String eventLocation, String eventDate, String startTime, String endTime, String eventType, String eventMode) {
+        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
+            Time startTimeValue = new Time(timeFormat.parse(startTime).getTime());
+            Time endTimeValue = new Time(timeFormat.parse(endTime).getTime());
+
+            PreparedStatement preparedStatement = dbConnection.prepareStatement("INSERT INTO events (eventID, eventName, eventLocation, eventDate, startTime, endTime, eventType, eventMode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            preparedStatement.setString(1, eventID);
+            preparedStatement.setString(2, eventName);
+            preparedStatement.setString(3, eventLocation);
+            preparedStatement.setDate(4, java.sql.Date.valueOf(eventDate));
+            preparedStatement.setTime(5, startTimeValue);
+            preparedStatement.setTime(6, endTimeValue);
+            preparedStatement.setString(7, eventType);
+            preparedStatement.setString(8, eventMode);
+
+            int rowsInserted = preparedStatement.executeUpdate();
+
+            if (rowsInserted > 0) {
+                JOptionPane.showMessageDialog(null, "Event added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                throw new SQLException("Failed to insert event into the database.");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Failed to insert event into the database.\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -394,6 +434,32 @@ public class DatabaseManager {
         }
 
         return students;
+    }
+
+    public List<Event> getAllEvents() {
+        List<Event> events = new ArrayList<>();
+
+        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            Statement statement = dbConnection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM events");
+
+            while (resultSet.next()) {
+                String eventID = resultSet.getString("eventID");
+                String eventName = resultSet.getString("eventName");
+                String eventLocation = resultSet.getString("eventLocation");
+                Date eventDate = resultSet.getDate("eventDate");
+                Time startTime = resultSet.getTime("startTime");
+                Time endTime = resultSet.getTime("endTime");
+                String eventType = resultSet.getString("eventType");
+                String eventMode = resultSet.getString("eventMode");
+
+                events.add(new Event(eventID, eventName, eventLocation, eventDate.toString(), startTime.toString(), endTime.toString(), eventType, eventMode));
+            }
+            resultSet.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return events;
     }
 
     /**

@@ -1,3 +1,6 @@
+import com.raven.datechooser.DateChooser;
+import com.raven.swing.TimePicker;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -7,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -73,13 +77,30 @@ public class GUI {
     private JButton deleteButton;
     private JButton allButton;
     private JTextField searchField;
+    private JPanel Dashboard;
+    private JTextField eventNameTxtF;
+    private JTextField eventLocTxtF;
+    private JTextField eventTypeTxtF;
+    private JTextField eventModeTxtF;
+    private JButton addEventButton;
+    private JTextField dateField;
+    private JTextField startTimeField;
+    private JButton startTimeButton;
+    private JTextField endTimeField;
+    private JButton endTimeButton;
+    private JTable eventsTable;
+    private JButton pickDateButton;
 
     private DefaultTableModel umTableModel;
+    private DefaultTableModel eventsTableModel;
+    private DateChooser datePicker = new DateChooser();
+    private TimePicker timePicker = new TimePicker();
 
     private DatabaseManager databaseManager;
     private Controller controller;
-    private List<EvaluationForm> evalFormDataList;
     private List<User> users;
+    private List<Event> events;
+    private List<EvaluationForm> evalFormDataList;
     private User loggedUser;
 
     GUI() {
@@ -94,6 +115,10 @@ public class GUI {
 
         frame.add(MainWindow);
 
+        datePicker.setLabelCurrentDayVisible(false);
+        datePicker.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
+        datePicker.setTextField(dateField);
+
         umTableModel = new DefaultTableModel();
         umTableModel.addColumn("Full Name");
         umTableModel.addColumn("Email");
@@ -106,11 +131,23 @@ public class GUI {
         umTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         umTable.setModel(umTableModel);
 
+        eventsTableModel = new DefaultTableModel();
+        eventsTableModel.addColumn("Name");
+        eventsTableModel.addColumn("Location");
+        eventsTableModel.addColumn("Date");
+        eventsTableModel.addColumn("Type");
+
+        eventsTable.setDefaultEditor(Object.class, null);
+        eventsTable.getTableHeader().setReorderingAllowed(false);
+        eventsTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        eventsTable.setModel(eventsTableModel);
+
         SignUpTitle.setVisible(false);
         OnBoardingSP.setVisible(false);
         LogIn.setVisible(false);
         Profile.setVisible(false);
         EvalForm.setVisible(false);
+        Dashboard.setVisible(false);
         UserManagement.setVisible(false);
         frame.setVisible(true);
 
@@ -295,6 +332,57 @@ public class GUI {
             }
         });
 
+        dashboardButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Profile.setVisible(false);
+                UserManagement.setVisible(false);
+                Dashboard.setVisible(true);
+
+                eventsTable.setModel(eventsTableModel);
+                events = databaseManager.getAllEvents();
+                eventsTableModel.setRowCount(0);
+
+                for (Event event :events) {
+                    eventsTableModel.addRow(new Object[]{event.getName(), event.getLocation(), event.getDate(), event.getType()});
+                }
+            }
+        });
+
+        startTimeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                timePicker.showPopup(null, 100, 100);
+                timePicker.setDisplayText(startTimeField);
+            }
+        });
+
+        endTimeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                timePicker.showPopup(null, 100, 100);
+                timePicker.setDisplayText(endTimeField);
+            }
+        });
+
+        addEventButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                UUID uuid = UUID.randomUUID();
+
+                String eventID = String.valueOf(uuid);
+                String eventName = eventNameTxtF.getText();
+                String eventLocation = eventLocTxtF.getText();
+                String eventDate = dateField.getText();
+                String startTime = startTimeField.getText();
+                String endTime = endTimeField.getText();
+                String eventType = eventTypeTxtF.getText();
+                String eventMode = eventModeTxtF.getText();
+
+                databaseManager.insertEventData(eventID, eventName, eventLocation, eventDate, startTime, endTime, eventType, eventMode);
+            }
+        });
+
         userManangementButton.addActionListener(new ActionListener() {
             /**
              * Handles the navigation to the User Management panel when the "User Management" button is clicked.
@@ -317,64 +405,6 @@ public class GUI {
 
                 umTableModel.fireTableDataChanged();
                 umTable.repaint();
-            }
-        });
-
-        setYrLvlBtn.addActionListener(new ActionListener() {
-            /**
-             * Handles setting the year level for a student when the "Set Year Level" button is clicked.
-             * Displays a dialog for year level selection and updates the user's year level in the database.
-             *
-             * @param e The ActionEvent triggered by clicking the "Set Year Level" button.
-             */
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (loggedUser != null && "Student".equals(loggedUser.getType())) {
-                    String[] yearOptions = {"Year 1", "Year 2", "Year 3", "Year 4", "Batch X"};
-
-                    String selectedOption = (String) JOptionPane.showInputDialog(null, "Select Year Level", "Year Level Selection",
-                            JOptionPane.QUESTION_MESSAGE, null, yearOptions, yearOptions[0]);
-
-                    if (selectedOption != null) {
-                        ((Student) loggedUser).setYearLevel(selectedOption);
-                        databaseManager.setYearLevel(loggedUser.getUniqueID(), selectedOption);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Year level can only be set for students.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-        changePass.addActionListener(new ActionListener() {
-            /**
-             * Handles the change password functionality when the "Change Password" button is clicked.
-             * Prompts the user for a new password and updates the password in the database.
-             *
-             * @param e The ActionEvent triggered by clicking the "Change Password" button.
-             */
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JPasswordField passwordField = new JPasswordField();
-                JComponent[] inputs = new JComponent[] {
-                        new JLabel("Enter your new password:"),
-                        passwordField
-                };
-
-                int result = JOptionPane.showConfirmDialog(null, inputs, "Change Password", JOptionPane.OK_CANCEL_OPTION);
-
-                if (result == JOptionPane.OK_OPTION) {
-                    char[] passwordChars = passwordField.getPassword();
-                    String newPassword = new String(passwordChars);
-
-                    if (!newPassword.isEmpty()) {
-                        String encryptedPassword = Controller.encryptPassword(newPassword);
-                        databaseManager.changePassword(loggedUser.getUniqueID(), encryptedPassword);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Password cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Password change canceled.", "Information", JOptionPane.INFORMATION_MESSAGE);
-                }
             }
         });
 
@@ -449,6 +479,64 @@ public class GUI {
 
                 umTableModel.fireTableDataChanged();
                 umTable.repaint();
+            }
+        });
+
+        setYrLvlBtn.addActionListener(new ActionListener() {
+            /**
+             * Handles setting the year level for a student when the "Set Year Level" button is clicked.
+             * Displays a dialog for year level selection and updates the user's year level in the database.
+             *
+             * @param e The ActionEvent triggered by clicking the "Set Year Level" button.
+             */
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (loggedUser != null && "Student".equals(loggedUser.getType())) {
+                    String[] yearOptions = {"Year 1", "Year 2", "Year 3", "Year 4", "Batch X"};
+
+                    String selectedOption = (String) JOptionPane.showInputDialog(null, "Select Year Level", "Year Level Selection",
+                            JOptionPane.QUESTION_MESSAGE, null, yearOptions, yearOptions[0]);
+
+                    if (selectedOption != null) {
+                        ((Student) loggedUser).setYearLevel(selectedOption);
+                        databaseManager.setYearLevel(loggedUser.getUniqueID(), selectedOption);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Year level can only be set for students.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        changePass.addActionListener(new ActionListener() {
+            /**
+             * Handles the change password functionality when the "Change Password" button is clicked.
+             * Prompts the user for a new password and updates the password in the database.
+             *
+             * @param e The ActionEvent triggered by clicking the "Change Password" button.
+             */
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JPasswordField passwordField = new JPasswordField();
+                JComponent[] inputs = new JComponent[] {
+                        new JLabel("Enter your new password:"),
+                        passwordField
+                };
+
+                int result = JOptionPane.showConfirmDialog(null, inputs, "Change Password", JOptionPane.OK_CANCEL_OPTION);
+
+                if (result == JOptionPane.OK_OPTION) {
+                    char[] passwordChars = passwordField.getPassword();
+                    String newPassword = new String(passwordChars);
+
+                    if (!newPassword.isEmpty()) {
+                        String encryptedPassword = Controller.encryptPassword(newPassword);
+                        databaseManager.changePassword(loggedUser.getUniqueID(), encryptedPassword);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Password cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Password change canceled.", "Information", JOptionPane.INFORMATION_MESSAGE);
+                }
             }
         });
 
