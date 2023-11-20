@@ -19,21 +19,7 @@ Welcome to the CES-Tracker repository! Follow the instructions below to clone th
     ```bash
     cd CES-Tracker
     ```
-
-### Eclipse
-
-1. Open Eclipse IDE.
-2. Click on "File" in the menu, then select "Import."
-3. Choose "Projects from Git" and click "Next."
-4. Select "Clone URI" and click "Next."
-5. Enter the repository URI:
-
-    ```
-    https://github.com/aguilarsean/CES-Tracker
-    ```
-
-6. Follow the wizard to complete the cloning process.
-
+   
 ### IntelliJ IDEA
 
 1. Open IntelliJ IDEA.
@@ -46,5 +32,31 @@ Welcome to the CES-Tracker repository! Follow the instructions below to clone th
 
 4. Click "Clone" and wait for the process to complete.
 5. Open the project by selecting the project's root directory.
+
+## Installing Libraries
+
+To ensure the proper functioning of the CES-Tracker program, you need to install the required libraries. Follow the steps below to install the library using IntelliJ IDEA.
+
+### Library Installation
+
+1. Open IntelliJ IDEA.
+
+2. Click on "File" in the menu, then select "Project Structure."
+
+3. In the Project Structure window, navigate to "Project" on the left sidebar.
+
+4. Select the project SDK. Ensure that you are using a compatible JDK version.
+
+5. Go to the "Libraries" tab.
+
+6. Click on the "+" icon to add a new library.
+
+7. Choose "Java" from the dropdown menu.
+
+8. Navigate to the "lib" folder in the project directory.
+
+9. Select the required library (assuming it's a JAR file) and click "OK."
+
+10. Click "Apply" and then "OK" to confirm the changes.
 
 # Happy Hacking!
