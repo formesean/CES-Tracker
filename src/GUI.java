@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,9 +53,9 @@ public class GUI {
     private JLabel userCourse;
     private JLabel userPoints;
     private JPanel EvalForm;
-    private JComboBox comboBox1;
-    private JTextField qOneTF;
-    private JTextField qTwoTF;
+    private JComboBox eventsBox;
+    private JTextField q1TxtF;
+    private JTextField q2TxtF;
     private JButton beginningButton;
     private JButton middleButton;
     private JButton endButton;
@@ -89,12 +90,22 @@ public class GUI {
     private JTextField endTimeField;
     private JButton endTimeButton;
     private JTable eventsTable;
-    private JButton pickDateButton;
+    private JTextField q3TxtF;
+    private JTextField q4TxtF;
+    private JTextField q5TxtF;
+    private JPanel radioBP;
+    private JRadioButton angryRadioButton;
+    private JRadioButton disappointedRadioButton;
+    private JRadioButton neutralRadioButton;
+    private JRadioButton goodRadioButton;
+    private JRadioButton loveEmojisRadioButton;
+    private JScrollPane efScrollPane;
 
     private DefaultTableModel umTableModel;
     private DefaultTableModel eventsTableModel;
     private DateChooser datePicker = new DateChooser();
     private TimePicker timePicker = new TimePicker();
+    private ButtonGroup radioBtnGroup;
 
     private DatabaseManager databaseManager;
     private Controller controller;
@@ -141,6 +152,15 @@ public class GUI {
         eventsTable.getTableHeader().setReorderingAllowed(false);
         eventsTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         eventsTable.setModel(eventsTableModel);
+
+        radioBtnGroup = new ButtonGroup();
+        radioBtnGroup.add(angryRadioButton);
+        radioBtnGroup.add(disappointedRadioButton);
+        radioBtnGroup.add(neutralRadioButton);
+        radioBtnGroup.add(goodRadioButton);
+        radioBtnGroup.add(loveEmojisRadioButton);
+
+        efScrollPane.getVerticalScrollBar().setUnitIncrement(20);
 
         SignUpTitle.setVisible(false);
         OnBoardingSP.setVisible(false);
@@ -243,17 +263,24 @@ public class GUI {
                             if ("Admin".equals(userType)) {
                                 OnBoardingSP.setVisible(false);
                                 StudentSP.setVisible(false);
-                                AdminSP.setVisible(true);
                                 LogIn.setVisible(false);
+                                EvalForm.setVisible(false);
+                                Dashboard.setVisible(false);
+                                UserManagement.setVisible(false);
+
+                                AdminSP.setVisible(true);
                                 Profile.setVisible(true);
 
                                 JOptionPane.showMessageDialog(null, "Admin login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
                             } else if ("Student".equals(userType)) {
                                 OnBoardingSP.setVisible(false);
                                 AdminSP.setVisible(false);
-                                StudentSP.setVisible(true);
                                 LogIn.setVisible(false);
                                 EvalForm.setVisible(false);
+                                Dashboard.setVisible(false);
+                                UserManagement.setVisible(false);
+
+                                StudentSP.setVisible(true);
                                 Profile.setVisible(true);
 
                                 JOptionPane.showMessageDialog(null, "Student login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -295,6 +322,16 @@ public class GUI {
             public void actionPerformed(ActionEvent e) {
                 EvalForm.setVisible(true);
                 Profile.setVisible(false);
+
+                events = databaseManager.getAllEvents();
+                eventsBox.removeAllItems();
+                eventsBox.addItem("Select Event Name");
+
+                for (Event event : events) {
+                    eventsBox.addItem(event.getName());
+                }
+
+                eventsBox.setSelectedIndex(0);
             }
         });
 
@@ -316,13 +353,18 @@ public class GUI {
                     UUID uuid = UUID.randomUUID();
 
                     String evalformID = String.valueOf(uuid);
-                    String qOne = qOneTF.getText();
-                    String qTwo = qTwoTF.getText();
+                    String qOne = q1TxtF.getText();
+                    String qTwo = q2TxtF.getText();
+                    String qThree = q3TxtF.getText();
+                    String qFour = q4TxtF.getText();
+                    String qFive = q5TxtF.getText();
+                    String rating = getSelectedRadioValue();
                     ImageIcon beginningImg = (ImageIcon) beginningImage.getIcon();
                     ImageIcon middleImg = (ImageIcon) middleImage.getIcon();
                     ImageIcon endImg = (ImageIcon) endImage.getIcon();
+
                     if (beginningImg != null && middleImg != null && endImg != null) {
-                        databaseManager.insertEvalForm(evalformID, id, evalformID, qOne, qTwo, beginningImg, middleImg, endImg);
+                        databaseManager.insertEvalForm(evalformID, id, evalformID, qOne, qTwo, qThree, qFour, qFive, rating, beginningImg, middleImg, endImg);
                     } else {
                         JOptionPane.showMessageDialog(null, "Please select images for all three categories.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -553,9 +595,11 @@ public class GUI {
                 AdminSP.setVisible(false);
                 StudentSP.setVisible(false);
                 Profile.setVisible(false);
+                EvalForm.setVisible(false);
+                Dashboard.setVisible(false);
+                UserManagement.setVisible(false);
 
                 OnBoardingSP.setVisible(true);
-                EvalForm.setVisible(false);
                 LogIn.setVisible(true);
 
                 try {
@@ -592,13 +636,14 @@ public class GUI {
                         Image resizedImage = img.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
                         ImageIcon icon = new ImageIcon(resizedImage);
 
-                        if (sourceBtn == beginningButton) {
+                        if (sourceBtn == beginningButton && beginningImage != null) {
                             beginningImage.setIcon(icon);
-                        } else if (sourceBtn == middleButton) {
+                        } else if (sourceBtn == middleButton && middleImage != null) {
                             middleImage.setIcon(icon);
-                        } else if (sourceBtn == endButton) {
+                        } else if (sourceBtn == endButton && endImage != null) {
                             endImage.setIcon(icon);
                         }
+
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
@@ -729,6 +774,21 @@ public class GUI {
             JOptionPane.showMessageDialog(null, "User not found. Please log in again.", "Error", JOptionPane.ERROR_MESSAGE);
             clearTextFields();
         }
+    }
+
+    private String getSelectedRadioValue() {
+        if (angryRadioButton.isSelected()) {
+            return "Angry";
+        } else if (disappointedRadioButton.isSelected()) {
+            return "Disappointed";
+        } else if (neutralRadioButton.isSelected()) {
+            return "Neutral";
+        } else if (goodRadioButton.isSelected()) {
+            return "Good";
+        } else if (loveEmojisRadioButton.isSelected()) {
+            return "Love Emojis";
+        }
+        return null; // Handle if no radio button is selected
     }
 
     public static void main(String[] args) {

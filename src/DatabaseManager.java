@@ -106,6 +106,53 @@ public class DatabaseManager {
     }
 
     /**
+     * Inserts a new evaluation form into the database.
+     *
+     * @param evalformID   The unique ID of the evaluation form.
+     * @param userID       The user ID associated with the evaluation form.
+     * @param eventID      The event ID associated with the evaluation form.
+     * @param qOne         The response to the first question.
+     * @param qTwo         The response to the second question.
+     * @param beginningImg The image associated with the beginning of the event.
+     * @param middleImg    The image associated with the middle of the event.
+     * @param endImg       The image associated with the end of the event.
+     */
+    public void insertEvalForm(String evalformID, String userID, String eventID, String qOne, String qTwo, String qThree, String qFour, String qFive, String rating, ImageIcon beginningImg, ImageIcon middleImg, ImageIcon endImg) {
+        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            PreparedStatement statement = dbConnection.prepareStatement("INSERT INTO evalform (evalformID, userID, eventID, qOne, qTwo, qThree, qFour, qFive, rating, beginningImg, middleImg, endImg, submitted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+            Timestamp submitted_at = new Timestamp(new Date().getTime());
+            byte[] beginningImgBytes = controller.convertImageIconToBytes(beginningImg);
+            byte[] middleImgBytes = controller.convertImageIconToBytes(middleImg);
+            byte[] endImgBytes = controller.convertImageIconToBytes(endImg);
+
+            statement.setString(1, evalformID);
+            statement.setString(2, userID);
+            statement.setString(3, eventID);
+            statement.setString(4, qOne);
+            statement.setString(5, qTwo);
+            statement.setString(6, qThree);
+            statement.setString(7, qFour);
+            statement.setString(8, qFive);
+            statement.setString(9, rating);
+            statement.setBytes(10, beginningImgBytes);
+            statement.setBytes(11, middleImgBytes);
+            statement.setBytes(12, endImgBytes);
+            statement.setTimestamp(13, submitted_at);
+            int rowsInserted = statement.executeUpdate();
+
+            if (rowsInserted > 0) {
+                JOptionPane.showMessageDialog(null, "Evaluation Form submitted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, "Failed to submit evaluation form!", "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
      * Updates the CES points of a user in the database.
      *
      * @param id     The user ID.
@@ -494,48 +541,6 @@ public class DatabaseManager {
         }
 
         return evalFormDataList;
-    }
-
-    /**
-     * Inserts a new evaluation form into the database.
-     *
-     * @param evalformID   The unique ID of the evaluation form.
-     * @param userID       The user ID associated with the evaluation form.
-     * @param eventID      The event ID associated with the evaluation form.
-     * @param qOne         The response to the first question.
-     * @param qTwo         The response to the second question.
-     * @param beginningImg The image associated with the beginning of the event.
-     * @param middleImg    The image associated with the middle of the event.
-     * @param endImg       The image associated with the end of the event.
-     */
-    public void insertEvalForm(String evalformID, String userID, String eventID, String qOne, String qTwo, ImageIcon beginningImg, ImageIcon middleImg, ImageIcon endImg) {
-        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
-            PreparedStatement statement = dbConnection.prepareStatement("INSERT INTO evalform (evalformID, userID, eventID, qOne, qTwo, beginningImg, middleImg, endImg, submitted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-            Timestamp submitted_at = new Timestamp(new Date().getTime());
-            byte[] beginningImgBytes = controller.convertImageIconToBytes(beginningImg);
-            byte[] middleImgBytes = controller.convertImageIconToBytes(middleImg);
-            byte[] endImgBytes = controller.convertImageIconToBytes(endImg);
-
-            statement.setString(1, evalformID);
-            statement.setString(2, userID);
-            statement.setString(3, eventID);
-            statement.setString(4, qOne);
-            statement.setString(5, qTwo);
-            statement.setBytes(6, beginningImgBytes);
-            statement.setBytes(7, middleImgBytes);
-            statement.setBytes(8, endImgBytes);
-            statement.setTimestamp(9, submitted_at);
-            int rowsInserted = statement.executeUpdate();
-
-            if (rowsInserted > 0) {
-                JOptionPane.showMessageDialog(null, "Evaluation Form submitted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(null, "Failed to submit evaluation form!", "Error", JOptionPane.INFORMATION_MESSAGE);
-            }
-        } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**
