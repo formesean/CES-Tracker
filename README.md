@@ -37,26 +37,24 @@ Welcome to the CES-Tracker repository! Follow the instructions below to clone th
 
 To ensure the proper functioning of the CES-Tracker program, you need to install the required libraries. Follow the steps below to install the library using IntelliJ IDEA.
 
-### Library Installation
+### Dependency Installation
 
 1. Open IntelliJ IDEA.
 
 2. Click on "File" in the menu, then select "Project Structure."
 
-3. In the Project Structure window, navigate to "Project" on the left sidebar.
+3. In the Project Structure window, navigate to "Modules" on the left sidebar.
 
-4. Select the project SDK. Ensure that you are using a compatible JDK version.
+4. Select "Dependencies".
 
-5. Go to the "Libraries" tab.
+5. Click on the "+" icon and select"JARs or Directories".
 
-6. Click on the "+" icon to add a new library.
+6. Select all the JAR files inside the lib folder.
 
-7. Choose "Java" from the dropdown menu.
+7. Click "OK" to confirm the addition.
 
-8. Navigate to the "lib" folder in the project directory.
+8. Click "Apply" and then "OK" to confirm the changes.
 
-9. Select the required library (assuming it's a JAR file) and click "OK."
-
-10. Click "Apply" and then "OK" to confirm the changes.
+9. Click Setup SDK and select your SDK to fix errors.
 
 # Happy Hacking!
