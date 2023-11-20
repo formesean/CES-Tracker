@@ -426,36 +426,9 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="b8940" class="javax.swing.JLabel" binding="bImg">
-                    <constraints>
-                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <text value=""/>
-                    </properties>
-                  </component>
-                  <component id="87919" class="javax.swing.JLabel" binding="eImg">
-                    <constraints>
-                      <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <text value=""/>
-                    </properties>
-                  </component>
-                  <component id="6e3ac" class="javax.swing.JLabel" binding="mImg">
-                    <constraints>
-                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="0.0" weighty="0.0"/>
-                    </constraints>
-                    <properties>
-                      <text value=""/>
-                    </properties>
-                  </component>
                   <component id="e6770" class="javax.swing.JLabel" binding="userPoints">
                     <constraints>
-                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -618,7 +591,7 @@
                             </constraints>
                             <properties/>
                           </component>
-                          <grid id="f894" binding="radioBP" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="3">
+                          <grid id="f894" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="3">
                             <constraints>
                               <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                             </constraints>
@@ -1013,6 +986,288 @@
                         <constraints/>
                         <properties/>
                       </component>
+                    </children>
+                  </scrollpane>
+                </children>
+              </grid>
+            </children>
+          </grid>
+          <grid id="7081a" binding="Approval" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="100" left="100" bottom="100" right="100"/>
+            <constraints>
+              <card name="Card7"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <scrollpane id="e30d1">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="22ded" class="javax.swing.JTable" binding="approvalTable">
+                    <constraints/>
+                    <properties/>
+                  </component>
+                </children>
+              </scrollpane>
+              <grid id="aa599" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="4">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="5f51e" class="javax.swing.JButton" binding="viewFormButton" default-binding="true">
+                    <constraints/>
+                    <properties>
+                      <margin top="0" left="0" bottom="0" right="0"/>
+                      <text value="View Form"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+            </children>
+          </grid>
+          <grid id="92a7c" binding="ViewEvalForm" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <card name="Card8"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <grid id="2675e" layout-manager="GridLayoutManager" row-count="18" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="50" left="50" bottom="50" right="50"/>
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <scrollpane id="de58d" binding="veScrollPane">
+                    <constraints>
+                      <grid row="0" column="0" row-span="18" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <grid id="bf218" layout-manager="GridLayoutManager" row-count="17" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                        <margin top="50" left="50" bottom="50" right="50"/>
+                        <constraints/>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="6180d" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="1. I saw that..."/>
+                            </properties>
+                          </component>
+                          <component id="334e4" class="javax.swing.JTextField" binding="veQ1">
+                            <constraints>
+                              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                <preferred-size width="150" height="-1"/>
+                              </grid>
+                            </constraints>
+                            <properties/>
+                          </component>
+                          <component id="6e714" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="2. I heard..."/>
+                            </properties>
+                          </component>
+                          <component id="2e06c" class="javax.swing.JTextField" binding="veQ2">
+                            <constraints>
+                              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                <preferred-size width="150" height="-1"/>
+                              </grid>
+                            </constraints>
+                            <properties/>
+                          </component>
+                          <component id="3602a" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="Documentation"/>
+                            </properties>
+                          </component>
+                          <component id="e152" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="3. With that I experienced, I will..."/>
+                            </properties>
+                          </component>
+                          <component id="d1c49" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="4. The exposure activity made me think that..."/>
+                            </properties>
+                          </component>
+                          <component id="c569f" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="5. I felt that..."/>
+                            </properties>
+                          </component>
+                          <component id="31e0a" class="javax.swing.JLabel">
+                            <constraints>
+                              <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="Please check your overall rating to this CES exposure activity"/>
+                            </properties>
+                          </component>
+                          <component id="7460e" class="javax.swing.JTextField" binding="veQ3">
+                            <constraints>
+                              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                <preferred-size width="150" height="-1"/>
+                              </grid>
+                            </constraints>
+                            <properties/>
+                          </component>
+                          <component id="64da2" class="javax.swing.JTextField" binding="veQ4">
+                            <constraints>
+                              <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                <preferred-size width="150" height="-1"/>
+                              </grid>
+                            </constraints>
+                            <properties/>
+                          </component>
+                          <component id="d9a71" class="javax.swing.JTextField" binding="veQ5">
+                            <constraints>
+                              <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                                <preferred-size width="150" height="-1"/>
+                              </grid>
+                            </constraints>
+                            <properties/>
+                          </component>
+                          <grid id="f68ca" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="3">
+                            <constraints>
+                              <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="19ff7" class="javax.swing.JRadioButton" binding="veR1">
+                                <constraints/>
+                                <properties>
+                                  <text value="Angry"/>
+                                </properties>
+                              </component>
+                              <component id="43101" class="javax.swing.JRadioButton" binding="veR2">
+                                <constraints/>
+                                <properties>
+                                  <text value="Disappointed"/>
+                                </properties>
+                              </component>
+                              <component id="b9014" class="javax.swing.JRadioButton" binding="veR3">
+                                <constraints/>
+                                <properties>
+                                  <text value="Neutral"/>
+                                </properties>
+                              </component>
+                              <component id="fa91b" class="javax.swing.JRadioButton" binding="veR4">
+                                <constraints/>
+                                <properties>
+                                  <text value="Good"/>
+                                </properties>
+                              </component>
+                              <component id="b03e3" class="javax.swing.JRadioButton" binding="veR5">
+                                <constraints/>
+                                <properties>
+                                  <text value="Love Emojis"/>
+                                </properties>
+                              </component>
+                            </children>
+                          </grid>
+                          <grid id="f188d" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="4">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="77214" class="javax.swing.JButton" binding="goBackButton" default-binding="true">
+                                <constraints/>
+                                <properties>
+                                  <text value="Go Back"/>
+                                </properties>
+                              </component>
+                            </children>
+                          </grid>
+                          <grid id="3be40" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="4">
+                            <constraints>
+                              <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="93447" class="javax.swing.JButton" binding="declineButton" default-binding="true">
+                                <constraints/>
+                                <properties>
+                                  <text value="Decline"/>
+                                </properties>
+                              </component>
+                              <component id="d3710" class="javax.swing.JButton" binding="approveButton">
+                                <constraints/>
+                                <properties>
+                                  <text value="Approve"/>
+                                </properties>
+                              </component>
+                            </children>
+                          </grid>
+                          <component id="f7754" class="javax.swing.JLabel" binding="eventTitleField">
+                            <constraints>
+                              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value=""/>
+                            </properties>
+                          </component>
+                          <grid id="4367f" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+                            <constraints>
+                              <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="fc16b" class="javax.swing.JLabel" binding="bImg">
+                                <constraints/>
+                                <properties>
+                                  <text value=""/>
+                                </properties>
+                              </component>
+                              <component id="2bd5d" class="javax.swing.JLabel" binding="mImg">
+                                <constraints/>
+                                <properties>
+                                  <text value=""/>
+                                </properties>
+                              </component>
+                              <component id="510f2" class="javax.swing.JLabel" binding="eImg">
+                                <constraints/>
+                                <properties>
+                                  <text value=""/>
+                                </properties>
+                              </component>
+                            </children>
+                          </grid>
+                        </children>
+                      </grid>
                     </children>
                   </scrollpane>
                 </children>

@@ -11,7 +11,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.UUID;
 
@@ -63,9 +62,6 @@ public class GUI {
     private JLabel middleImage;
     private JLabel endImage;
     private JButton submitEvalFormBtn;
-    private JLabel bImg;
-    private JLabel mImg;
-    private JLabel eImg;
     private JPanel UserManagement;
     private JTable umTable;
     private JButton setYrLvlBtn;
@@ -93,20 +89,44 @@ public class GUI {
     private JTextField q3TxtF;
     private JTextField q4TxtF;
     private JTextField q5TxtF;
-    private JPanel radioBP;
     private JRadioButton angryRadioButton;
     private JRadioButton disappointedRadioButton;
     private JRadioButton neutralRadioButton;
     private JRadioButton goodRadioButton;
     private JRadioButton loveEmojisRadioButton;
     private JScrollPane efScrollPane;
+    private JPanel Approval;
+    private JTable approvalTable;
+    private JButton viewFormButton;
+    private JPanel ViewEvalForm;
+    private JButton goBackButton;
+    private JButton approveButton;
+    private JButton declineButton;
+    private JTextField veQ1;
+    private JTextField veQ2;
+    private JTextField veQ3;
+    private JTextField veQ4;
+    private JTextField veQ5;
+    private JLabel eventTitleField;
+    private JLabel bImg;
+    private JLabel mImg;
+    private JLabel eImg;
+    private JRadioButton veR1;
+    private JRadioButton veR2;
+    private JRadioButton veR3;
+    private JRadioButton veR4;
+    private JRadioButton veR5;
+    private JScrollPane veScrollPane;
 
     private DefaultTableModel umTableModel;
     private DefaultTableModel eventsTableModel;
+    private DefaultTableModel approvalTableModel;
     private DateChooser datePicker = new DateChooser();
     private TimePicker timePicker = new TimePicker();
     private ButtonGroup radioBtnGroup;
+    private ButtonGroup veBtnGroup;
 
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private DatabaseManager databaseManager;
     private Controller controller;
     private List<User> users;
@@ -153,6 +173,16 @@ public class GUI {
         eventsTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         eventsTable.setModel(eventsTableModel);
 
+        approvalTableModel = new DefaultTableModel();
+        approvalTableModel.addColumn("Student Name");
+        approvalTableModel.addColumn("Event Name");
+        approvalTableModel.addColumn("Submission Date");
+
+        approvalTable.setDefaultEditor(Object.class, null);
+        approvalTable.getTableHeader().setReorderingAllowed(false);
+        approvalTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        approvalTable.setModel(approvalTableModel);
+
         radioBtnGroup = new ButtonGroup();
         radioBtnGroup.add(angryRadioButton);
         radioBtnGroup.add(disappointedRadioButton);
@@ -160,7 +190,15 @@ public class GUI {
         radioBtnGroup.add(goodRadioButton);
         radioBtnGroup.add(loveEmojisRadioButton);
 
+        veBtnGroup = new ButtonGroup();
+        veBtnGroup.add(veR1);
+        veBtnGroup.add(veR2);
+        veBtnGroup.add(veR3);
+        veBtnGroup.add(veR4);
+        veBtnGroup.add(veR5);
+
         efScrollPane.getVerticalScrollBar().setUnitIncrement(20);
+        veScrollPane.getVerticalScrollBar().setUnitIncrement(20);
 
         SignUpTitle.setVisible(false);
         OnBoardingSP.setVisible(false);
@@ -169,6 +207,7 @@ public class GUI {
         EvalForm.setVisible(false);
         Dashboard.setVisible(false);
         UserManagement.setVisible(false);
+        Approval.setVisible(false);
         frame.setVisible(true);
 
         performAutoLogin();
@@ -351,8 +390,10 @@ public class GUI {
                     reader.close();
 
                     UUID uuid = UUID.randomUUID();
+                    String selectedEventName = (String) eventsBox.getSelectedItem();
 
                     String evalformID = String.valueOf(uuid);
+                    String eventID = getEventIDFromName(selectedEventName);
                     String qOne = q1TxtF.getText();
                     String qTwo = q2TxtF.getText();
                     String qThree = q3TxtF.getText();
@@ -364,7 +405,7 @@ public class GUI {
                     ImageIcon endImg = (ImageIcon) endImage.getIcon();
 
                     if (beginningImg != null && middleImg != null && endImg != null) {
-                        databaseManager.insertEvalForm(evalformID, id, evalformID, qOne, qTwo, qThree, qFour, qFive, rating, beginningImg, middleImg, endImg);
+                        databaseManager.insertEvalForm(evalformID, id, eventID, qOne, qTwo, qThree, qFour, qFive, rating, beginningImg, middleImg, endImg);
                     } else {
                         JOptionPane.showMessageDialog(null, "Please select images for all three categories.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -379,6 +420,7 @@ public class GUI {
             public void actionPerformed(ActionEvent e) {
                 Profile.setVisible(false);
                 UserManagement.setVisible(false);
+                Approval.setVisible(false);
                 Dashboard.setVisible(true);
 
                 eventsTable.setModel(eventsTableModel);
@@ -435,6 +477,8 @@ public class GUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Profile.setVisible(false);
+                Dashboard.setVisible(false);
+                Approval.setVisible(false);
                 UserManagement.setVisible(true);
 
                 umTable.setModel(umTableModel);
@@ -524,6 +568,81 @@ public class GUI {
             }
         });
 
+        approvalButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Profile.setVisible(false);
+                Dashboard.setVisible(false);
+                UserManagement.setVisible(false);
+                Approval.setVisible(true);
+
+                approvalTable.setModel(approvalTableModel);
+                evalFormDataList = databaseManager.getAllEvalFormData();
+                approvalTableModel.setRowCount(0);
+
+                for (EvaluationForm evalFormData : evalFormDataList) {
+                    String userName = databaseManager.getUserName(evalFormData.getUserID());
+                    String eventName = databaseManager.getEventName(evalFormData.getEventID());
+                    String submitted_atDate = dateFormat.format(evalFormData.getSubmitted_at());
+
+                    approvalTableModel.addRow(new Object[]{userName, eventName, submitted_atDate});
+                }
+
+                approvalTableModel.fireTableDataChanged();
+                approvalTable.repaint();
+            }
+        });
+
+        viewFormButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = approvalTable.getSelectedRow();
+
+                if (selectedRow != -1) {
+                    EvaluationForm selectedForm = evalFormDataList.get(selectedRow);
+                    String selectedFormID = selectedForm.getEvalformID();
+                    EvaluationForm viewedForm = databaseManager.getEvalFormData(selectedFormID);
+
+                    Approval.setVisible(false);
+                    ViewEvalForm.setVisible(true);
+
+                    eventTitleField.setText(databaseManager.getEventName(viewedForm.getEventID()));
+                    veQ1.setText(viewedForm.getQOne());
+                    veQ2.setText(viewedForm.getQTwo());
+                    veQ3.setText(viewedForm.getQThree());
+                    veQ4.setText(viewedForm.getQFour());
+                    veQ5.setText(viewedForm.getQFive());
+                    setRatingInButtonGroup(viewedForm.getRating());
+                    bImg.setIcon(viewedForm.getBeginningImg());
+                    mImg.setIcon(viewedForm.getMiddleImg());
+                    eImg.setIcon(viewedForm.getEndImg());
+
+                    eventTitleField.setEnabled(false);
+                    veQ1.setEditable(false);
+                    veQ2.setEditable(false);
+                    veQ3.setEditable(false);
+                    veQ4.setEditable(false);
+                    veQ5.setEditable(false);
+
+                    veR1.setEnabled(false);
+                    veR2.setEnabled(false);
+                    veR3.setEnabled(false);
+                    veR4.setEnabled(false);
+                    veR5.setEnabled(false);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please select a row to view.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        goBackButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ViewEvalForm.setVisible(false);
+                Approval.setVisible(true);
+            }
+        });
+
         setYrLvlBtn.addActionListener(new ActionListener() {
             /**
              * Handles setting the year level for a student when the "Set Year Level" button is clicked.
@@ -598,6 +717,7 @@ public class GUI {
                 EvalForm.setVisible(false);
                 Dashboard.setVisible(false);
                 UserManagement.setVisible(false);
+                Approval.setVisible(false);
 
                 OnBoardingSP.setVisible(true);
                 LogIn.setVisible(true);
@@ -776,6 +896,15 @@ public class GUI {
         }
     }
 
+    private String getEventIDFromName(String eventName) {
+        for (Event event : events) {
+            if (event.getName().equals(eventName)) {
+                return event.getUniqueID();
+            }
+        }
+        return null;
+    }
+
     private String getSelectedRadioValue() {
         if (angryRadioButton.isSelected()) {
             return "Angry";
@@ -788,7 +917,29 @@ public class GUI {
         } else if (loveEmojisRadioButton.isSelected()) {
             return "Love Emojis";
         }
-        return null; // Handle if no radio button is selected
+        return null;
+    }
+
+    private void setRatingInButtonGroup(String rating) {
+        switch (rating) {
+            case "Angry":
+                veBtnGroup.setSelected(veR1.getModel(), true);
+                break;
+            case "Disappointed":
+                veBtnGroup.setSelected(veR2.getModel(), true);
+                break;
+            case "Neutral":
+                veBtnGroup.setSelected(veR3.getModel(), true);
+                break;
+            case "Good":
+                veBtnGroup.setSelected(veR4.getModel(), true);
+                break;
+            case "Love Emojis":
+                veBtnGroup.setSelected(veR5.getModel(), true);
+                break;
+            default:
+                break;
+        }
     }
 
     public static void main(String[] args) {

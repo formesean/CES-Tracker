@@ -483,6 +483,46 @@ public class DatabaseManager {
         return students;
     }
 
+    public String getUserName(String userID) {
+        String userName = null;
+
+        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            try (PreparedStatement preparedStatement = dbConnection.prepareStatement("SELECT userName FROM users WHERE userID = ?")) {
+                preparedStatement.setString(1, userID);
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+                if (resultSet.next()) {
+                    userName = resultSet.getString("userName");
+                }
+
+                resultSet.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return userName;
+    }
+
+    public String getEventName(String eventID) {
+        String eventName = null;
+
+        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            try (PreparedStatement preparedStatement = dbConnection.prepareStatement("SELECT eventName FROM events WHERE eventID = ?")) {
+                preparedStatement.setString(1, eventID);
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+                if (resultSet.next()) {
+                    eventName = resultSet.getString("eventName");
+                }
+
+                resultSet.close();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return eventName;
+    }
+
     public List<Event> getAllEvents() {
         List<Event> events = new ArrayList<>();
 
@@ -522,25 +562,66 @@ public class DatabaseManager {
              ResultSet resultSet = statement.executeQuery("SELECT * FROM evalform")) {
 
             while (resultSet.next()) {
+                String evalformID = resultSet.getString("evalformID");
                 String userID = resultSet.getString("userID");
+                String eventID = resultSet.getString("eventID");
                 String qOne = resultSet.getString("qOne");
                 String qTwo = resultSet.getString("qTwo");
+                String qThree = resultSet.getString("qThree");
+                String qFour = resultSet.getString("qFour");
+                String qFive = resultSet.getString("qFive");
+                String rating = resultSet.getString("rating");
                 byte[] beginningImgBytes = resultSet.getBytes("beginningImg");
                 byte[] middleImgBytes = resultSet.getBytes("middleImg");
                 byte[] endImgBytes = resultSet.getBytes("endImg");
+                Timestamp submitted_at = resultSet.getTimestamp("submitted_at");
 
                 ImageIcon beginningImg = controller.convertBytesToImageIcon(beginningImgBytes);
                 ImageIcon middleImg = controller.convertBytesToImageIcon(middleImgBytes);
                 ImageIcon endImg = controller.convertBytesToImageIcon(endImgBytes);
 
-                EvaluationForm evaluationForm = new EvaluationForm(userID, qOne, qTwo, beginningImg, middleImg, endImg);
-                evalFormDataList.add(evaluationForm);
+                evalFormDataList.add(new EvaluationForm(evalformID, userID, eventID, qOne, qTwo, qThree, qFour, qFive, rating, beginningImg, middleImg, endImg, submitted_at));
             }
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
         }
 
         return evalFormDataList;
+    }
+
+    public EvaluationForm getEvalFormData(String evalformID) {
+        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            try (PreparedStatement statement = dbConnection.prepareStatement("SELECT * FROM evalform WHERE evalformID = ?")) {
+                statement.setString(1, evalformID);
+                ResultSet resultSet = statement.executeQuery();
+
+                if (resultSet.next()) {
+                    String userID = resultSet.getString("userID");
+                    String eventID = resultSet.getString("eventID");
+                    String qOne = resultSet.getString("qOne");
+                    String qTwo = resultSet.getString("qTwo");
+                    String qThree = resultSet.getString("qThree");
+                    String qFour = resultSet.getString("qFour");
+                    String qFive = resultSet.getString("qFive");
+                    String rating = resultSet.getString("rating");
+                    byte[] beginningImgBytes = resultSet.getBytes("beginningImg");
+                    byte[] middleImgBytes = resultSet.getBytes("middleImg");
+                    byte[] endImgBytes = resultSet.getBytes("endImg");
+                    Timestamp submitted_at = resultSet.getTimestamp("submitted_at");
+
+                    ImageIcon beginningImg = controller.convertBytesToImageIcon(beginningImgBytes);
+                    ImageIcon middleImg = controller.convertBytesToImageIcon(middleImgBytes);
+                    ImageIcon endImg = controller.convertBytesToImageIcon(endImgBytes);
+
+                    return new EvaluationForm(evalformID, userID, eventID, qOne, qTwo, qThree, qFour, qFive, rating, beginningImg, middleImg, endImg, submitted_at);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
 
     /**
