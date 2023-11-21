@@ -127,6 +127,36 @@ public class DatabaseManager {
         }
     }
 
+    public void archiveEvalForm(String evalformID, String userID, String eventID, String qOne, String qTwo, String qThree, String qFour, String qFive, String role, int rolePoints, String rating, ImageIcon beginningImg, ImageIcon middleImg, ImageIcon endImg) {
+        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            PreparedStatement statement = dbConnection.prepareStatement("INSERT INTO archive (evalformID, userID, eventID, qOne, qTwo, qThree, qFour, qFive, role, rolePoints, rating, beginningImg, middleImg, endImg, submitted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+            Timestamp submitted_at = new Timestamp(new Date().getTime());
+            byte[] beginningImgBytes = controller.convertImageIconToBytes(beginningImg);
+            byte[] middleImgBytes = controller.convertImageIconToBytes(middleImg);
+            byte[] endImgBytes = controller.convertImageIconToBytes(endImg);
+
+            statement.setString(1, evalformID);
+            statement.setString(2, userID);
+            statement.setString(3, eventID);
+            statement.setString(4, qOne);
+            statement.setString(5, qTwo);
+            statement.setString(6, qThree);
+            statement.setString(7, qFour);
+            statement.setString(8, qFive);
+            statement.setString(9, role);
+            statement.setInt(10, rolePoints);
+            statement.setString(11, rating);
+            statement.setBytes(12, beginningImgBytes);
+            statement.setBytes(13, middleImgBytes);
+            statement.setBytes(14, endImgBytes);
+            statement.setTimestamp(15, submitted_at);
+            statement.executeUpdate();
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void deleteUser(String id) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
             try (PreparedStatement deleteUserStatement = dbConnection.prepareStatement("DELETE FROM users WHERE userID = ?")) {
@@ -524,6 +554,44 @@ public class DatabaseManager {
         }
 
         return evalFormDataList;
+    }
+
+    public List<EvaluationForm> getUserArchive(String userID) {
+        List<EvaluationForm> evalformArchive = new ArrayList<>();
+
+        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+            PreparedStatement statement = dbConnection.prepareStatement("SELECT * FROM archive WHERE userID = ?");
+            statement.setString(1, userID);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                String evalformID = resultSet.getString("evalformID");
+                String eventID = resultSet.getString("eventID");
+                String qOne = resultSet.getString("qOne");
+                String qTwo = resultSet.getString("qTwo");
+                String qThree = resultSet.getString("qThree");
+                String qFour = resultSet.getString("qFour");
+                String qFive = resultSet.getString("qFive");
+                String role = resultSet.getString("role");
+                String rolePoints = resultSet.getString("rolePoints");
+                String rating = resultSet.getString("rating");
+                byte[] beginningImgBytes = resultSet.getBytes("beginningImg");
+                byte[] middleImgBytes = resultSet.getBytes("middleImg");
+                byte[] endImgBytes = resultSet.getBytes("endImg");
+                Timestamp submitted_at = resultSet.getTimestamp("submitted_at");
+
+                ImageIcon beginningImg = controller.convertBytesToImageIcon(beginningImgBytes);
+                ImageIcon middleImg = controller.convertBytesToImageIcon(middleImgBytes);
+                ImageIcon endImg = controller.convertBytesToImageIcon(endImgBytes);
+
+                evalformArchive.add(new EvaluationForm(evalformID, userID, eventID, qOne, qTwo, qThree, qFour, qFive, role, rolePoints, rating, beginningImg, middleImg, endImg, submitted_at));
+            }
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return evalformArchive;
     }
 
     public EvaluationForm getEvalFormData(String evalformID) {

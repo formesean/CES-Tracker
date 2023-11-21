@@ -13,9 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 public class GUI {
@@ -130,10 +128,13 @@ public class GUI {
     private JTextField role2Points;
     private JComboBox rolesBox;
     private JLabel roleTitleField;
+    private JPanel UserHistory;
+    private JTable profileHistoryTable;
 
     private DefaultTableModel umTableModel;
     private DefaultTableModel eventsTableModel;
     private DefaultTableModel approvalTableModel;
+    private DefaultTableModel profileHistoryTableModel;
     private DateChooser datePicker = new DateChooser();
     private TimePicker timePicker = new TimePicker();
     private ButtonGroup radioBtnGroup;
@@ -145,6 +146,7 @@ public class GUI {
     private List<User> users;
     private List<Event> events;
     private List<EvaluationForm> evalFormDataList;
+    private List<EvaluationForm> evalformArchive;
     private User loggedUser;
     private int roleCounter = 1;
 
@@ -196,6 +198,19 @@ public class GUI {
         approvalTable.getTableHeader().setReorderingAllowed(false);
         approvalTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         approvalTable.setModel(approvalTableModel);
+
+        profileHistoryTableModel = new DefaultTableModel();
+        profileHistoryTableModel.addColumn("Event Name");
+        profileHistoryTableModel.addColumn("Role");
+        profileHistoryTableModel.addColumn("Points Gained");
+
+        profileHistoryTable.setDefaultEditor(Object.class, null);
+        profileHistoryTable.getTableHeader().setReorderingAllowed(false);
+        profileHistoryTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        profileHistoryTable.setModel(profileHistoryTableModel);
+
+        profileHistoryTableModel.fireTableDataChanged();
+        profileHistoryTable.repaint();
 
         radioBtnGroup = new ButtonGroup();
         radioBtnGroup.add(angryRadioButton);
@@ -266,13 +281,6 @@ public class GUI {
         });
 
         logInBtn.addActionListener(new ActionListener() {
-            /**
-             * Handles user login when the "Log In" button is clicked.
-             * Authenticates user credentials, switches to the appropriate panel,
-             * and displays success or error messages.
-             *
-             * @param e The ActionEvent triggered by clicking the "Log In" button.
-             */
             @Override
             public void actionPerformed(ActionEvent e) {
                 String email = emailField.getText();
@@ -284,6 +292,8 @@ public class GUI {
                         if (databaseManager.authenticateUser(email, password)) {
                             loggedUser = databaseManager.getUser(userID);
                             updateLoggedInUserInfoLabels(loggedUser.getUniqueID());
+                            showHistory();
+
                             String userType = loggedUser.getType();
 
                             if ("Admin".equals(userType)) {
@@ -332,6 +342,9 @@ public class GUI {
             public void actionPerformed(ActionEvent e) {
                 Profile.setVisible(true);
                 EvalForm.setVisible(false);
+
+                updateLoggedInUserInfoLabels(loggedUser.getUniqueID());
+                showHistory();
             }
         });
 
@@ -340,6 +353,9 @@ public class GUI {
             public void actionPerformed(ActionEvent e) {
                 UserManagement.setVisible(false);
                 Profile.setVisible(true);
+
+                updateLoggedInUserInfoLabels(loggedUser.getUniqueID());
+                showHistory();
             }
         });
 
@@ -670,6 +686,7 @@ public class GUI {
                     int newCesPoints = currentPoints + pointsGained;
 
                     databaseManager.updateUserCESPoints(selectedForm.getUserID(), newCesPoints);
+                    databaseManager.archiveEvalForm(selectedForm.getEventID(), selectedForm.getUserID(), selectedForm.getEventID(), selectedForm.getQOne(), selectedForm.getQTwo(), selectedForm.getQThree(), selectedForm.getQFour(), selectedForm.getQFive(), selectedForm.getRole(), pointsGained, selectedForm.getRating(), selectedForm.getBeginningImg(), selectedForm.getMiddleImg(), selectedForm.getEndImg());
                     databaseManager.deleteEvalForm(selectedForm.getEvalformID());
 
                     approvalTable.setModel(approvalTableModel);
@@ -891,6 +908,8 @@ public class GUI {
 
                 if (loggedUser != null) {
                     updateLoggedInUserInfoLabels(userID);
+                    showHistory();
+
                     String userType = loggedUser.getType();
 
                     SignUp.setVisible(false);
@@ -991,6 +1010,19 @@ public class GUI {
                 break;
             default:
                 break;
+        }
+    }
+
+    private void showHistory() {
+        profileHistoryTable.setModel(profileHistoryTableModel);
+
+        evalformArchive = databaseManager.getUserArchive(loggedUser.getUniqueID());
+        profileHistoryTableModel.setRowCount(0);
+
+        for (EvaluationForm archive :evalformArchive) {
+            String eventName = databaseManager.getEventName(archive.getEventID());
+
+            profileHistoryTableModel.addRow(new Object[]{eventName, archive.getRole(), archive.getRolePoints()});
         }
     }
 
