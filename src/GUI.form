@@ -795,7 +795,7 @@
                       </component>
                     </children>
                   </grid>
-                  <grid id="80c06" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="80c06" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="0" left="45" bottom="0" right="0"/>
                     <constraints/>
                     <properties>
@@ -817,6 +817,14 @@
                         </constraints>
                         <properties>
                           <text value="Delete"/>
+                        </properties>
+                      </component>
+                      <component id="7ce4b" class="javax.swing.JButton" binding="viewHistoryButton" default-binding="true">
+                        <constraints>
+                          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="View History"/>
                         </properties>
                       </component>
                     </children>
@@ -1300,7 +1308,7 @@
                             <properties/>
                             <border type="none"/>
                             <children>
-                              <component id="77214" class="javax.swing.JButton" binding="goBackButton" default-binding="true">
+                              <component id="77214" class="javax.swing.JButton" binding="goBackApproval">
                                 <constraints/>
                                 <properties>
                                   <text value="Go Back"/>
@@ -1376,6 +1384,54 @@
                       </grid>
                     </children>
                   </scrollpane>
+                </children>
+              </grid>
+            </children>
+          </grid>
+          <grid id="9b9b" binding="ViewHistory" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <card name="Card9"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <grid id="eb3d6" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="50" left="50" bottom="50" right="50"/>
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <scrollpane id="4ebeb">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="99661" class="javax.swing.JTable" binding="userHistoryTable">
+                        <constraints/>
+                        <properties/>
+                      </component>
+                    </children>
+                  </scrollpane>
+                  <grid id="8d46e" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="2">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="16381" class="javax.swing.JButton" binding="goBackUMButton" default-binding="true">
+                        <constraints/>
+                        <properties>
+                          <text value="Back"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
                 </children>
               </grid>
             </children>

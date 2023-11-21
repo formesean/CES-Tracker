@@ -448,24 +448,50 @@ public class DatabaseManager {
         return userName;
     }
 
-    public String getEventName(String eventID) {
-        String eventName = null;
+//    public String getEventName(String eventID) {
+//        String eventName = null;
+//
+//        try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
+//            try (PreparedStatement preparedStatement = dbConnection.prepareStatement("SELECT eventName FROM events WHERE eventID = ?")) {
+//                preparedStatement.setString(1, eventID);
+//                ResultSet resultSet = preparedStatement.executeQuery();
+//
+//                if (resultSet.next()) {
+//                    eventName = resultSet.getString("eventName");
+//                }
+//
+//                resultSet.close();
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return eventName;
+//    }
 
+    public Event getEvent(String eventID) {
         try (Connection dbConnection = DriverManager.getConnection(jdbcUrl, jdbcUsername, jdbcPassword)) {
-            try (PreparedStatement preparedStatement = dbConnection.prepareStatement("SELECT eventName FROM events WHERE eventID = ?")) {
-                preparedStatement.setString(1, eventID);
-                ResultSet resultSet = preparedStatement.executeQuery();
+            try (PreparedStatement statement = dbConnection.prepareStatement("SELECT * FROM events WHERE eventID = ?")) {
+                statement.setString(1, eventID);
+                ResultSet resultSet = statement.executeQuery();
 
                 if (resultSet.next()) {
-                    eventName = resultSet.getString("eventName");
-                }
+                    String eventName = resultSet.getString("eventName");
+                    String eventLocation = resultSet.getString("eventLocation");
+                    String eventDate = String.valueOf(resultSet.getDate("eventDate"));
+                    String startTime = String.valueOf(resultSet.getTime("startTime"));
+                    String endTime = String.valueOf(resultSet.getTime("endTime"));
+                    String eventType = resultSet.getString("eventType");
+                    String eventMode = resultSet.getString("eventMode");
+                    String roles = resultSet.getString("roles");
+                    String rolePoints = resultSet.getString("rolePoints");
 
-                resultSet.close();
+                    return new Event(eventID, eventName, eventLocation, eventDate, startTime, endTime, eventType, eventMode, roles, rolePoints);
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return eventName;
+        return null;
     }
 
     public int getRolePoints(String eventID, String role) {

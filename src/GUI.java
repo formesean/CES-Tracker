@@ -101,7 +101,7 @@ public class GUI {
     private JTable approvalTable;
     private JButton viewFormButton;
     private JPanel ViewEvalForm;
-    private JButton goBackButton;
+    private JButton goBackApproval;
     private JButton approveButton;
     private JButton declineButton;
     private JTextField veQ1;
@@ -130,11 +130,16 @@ public class GUI {
     private JLabel roleTitleField;
     private JPanel UserHistory;
     private JTable profileHistoryTable;
+    private JButton viewHistoryButton;
+    private JPanel ViewHistory;
+    private JTable userHistoryTable;
+    private JButton goBackUMButton;
 
     private DefaultTableModel umTableModel;
     private DefaultTableModel eventsTableModel;
     private DefaultTableModel approvalTableModel;
     private DefaultTableModel profileHistoryTableModel;
+    private DefaultTableModel userHistoryTableModel;
     private DateChooser datePicker = new DateChooser();
     private TimePicker timePicker = new TimePicker();
     private ButtonGroup radioBtnGroup;
@@ -189,6 +194,20 @@ public class GUI {
         eventsTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         eventsTable.setModel(eventsTableModel);
 
+        userHistoryTableModel = new DefaultTableModel();
+        userHistoryTableModel.addColumn("Event Name");
+        userHistoryTableModel.addColumn("Location");
+        userHistoryTableModel.addColumn("Date");
+        userHistoryTableModel.addColumn("Type");
+        userHistoryTableModel.addColumn("Mode");
+        userHistoryTableModel.addColumn("Role");
+        userHistoryTableModel.addColumn("Points Gained");
+
+        userHistoryTable.setDefaultEditor(Object.class, null);
+        userHistoryTable.getTableHeader().setReorderingAllowed(false);
+        userHistoryTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        userHistoryTable.setModel(userHistoryTableModel);
+
         approvalTableModel = new DefaultTableModel();
         approvalTableModel.addColumn("Student Name");
         approvalTableModel.addColumn("Event Name");
@@ -208,9 +227,6 @@ public class GUI {
         profileHistoryTable.getTableHeader().setReorderingAllowed(false);
         profileHistoryTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         profileHistoryTable.setModel(profileHistoryTableModel);
-
-        profileHistoryTableModel.fireTableDataChanged();
-        profileHistoryTable.repaint();
 
         radioBtnGroup = new ButtonGroup();
         radioBtnGroup.add(angryRadioButton);
@@ -580,6 +596,45 @@ public class GUI {
             }
         });
 
+        viewHistoryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = umTable.getSelectedRow();
+
+                if (selectedRow != -1) {
+                    User selectedUser = users.get(selectedRow);
+                    String selectedUserID = selectedUser.getUniqueID();
+
+                    userHistoryTable.setModel(userHistoryTableModel);
+
+                    evalformArchive = databaseManager.getUserArchive(selectedUserID);
+                    userHistoryTableModel.setRowCount(0);
+
+                    for (EvaluationForm archive :evalformArchive) {
+                        Event event = databaseManager.getEvent(archive.getEventID());
+
+                        userHistoryTableModel.addRow(new Object[]{event.getName(), event.getLocation(), event.getDate(), event.getType(), event.getMode(), archive.getRole(), archive.getRolePoints()});
+                    }
+
+                    userHistoryTableModel.fireTableDataChanged();
+                    userHistoryTable.repaint();
+
+                    UserManagement.setVisible(false);
+                    ViewHistory.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please select a row to view.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        goBackUMButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ViewHistory.setVisible(false);
+                UserManagement.setVisible(true);
+            }
+        });
+
         searchField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -619,8 +674,9 @@ public class GUI {
                 approvalTableModel.setRowCount(0);
 
                 for (EvaluationForm evalFormData : evalFormDataList) {
+                    Event event = databaseManager.getEvent(evalFormData.getEventID());
                     String userName = databaseManager.getUserName(evalFormData.getUserID());
-                    String eventName = databaseManager.getEventName(evalFormData.getEventID());
+                    String eventName = event.getName();
                     String submitted_atDate = dateFormat.format(evalFormData.getSubmitted_at());
 
                     approvalTableModel.addRow(new Object[]{userName, eventName, submitted_atDate});
@@ -640,11 +696,12 @@ public class GUI {
                     EvaluationForm selectedForm = evalFormDataList.get(selectedRow);
                     String selectedFormID = selectedForm.getEvalformID();
                     EvaluationForm viewedForm = databaseManager.getEvalFormData(selectedFormID);
+                    Event event = databaseManager.getEvent(viewedForm.getEventID());
 
                     Approval.setVisible(false);
                     ViewEvalForm.setVisible(true);
 
-                    eventTitleField.setText(databaseManager.getEventName(viewedForm.getEventID()));
+                    eventTitleField.setText(event.getName());
                     veQ1.setText(viewedForm.getQOne());
                     veQ2.setText(viewedForm.getQTwo());
                     veQ3.setText(viewedForm.getQThree());
@@ -694,8 +751,9 @@ public class GUI {
                     approvalTableModel.setRowCount(0);
 
                     for (EvaluationForm evalFormData : evalFormDataList) {
+                        Event event = databaseManager.getEvent(evalFormData.getEventID());
                         String userName = databaseManager.getUserName(evalFormData.getUserID());
-                        String eventName = databaseManager.getEventName(evalFormData.getEventID());
+                        String eventName = event.getName();
                         String submitted_atDate = dateFormat.format(evalFormData.getSubmitted_at());
 
                         approvalTableModel.addRow(new Object[]{userName, eventName, submitted_atDate});
@@ -727,8 +785,9 @@ public class GUI {
                     approvalTableModel.setRowCount(0);
 
                     for (EvaluationForm evalFormData : evalFormDataList) {
+                        Event event = databaseManager.getEvent(evalFormData.getEventID());
                         String userName = databaseManager.getUserName(evalFormData.getUserID());
-                        String eventName = databaseManager.getEventName(evalFormData.getEventID());
+                        String eventName = event.getName();
                         String submitted_atDate = dateFormat.format(evalFormData.getSubmitted_at());
 
                         approvalTableModel.addRow(new Object[]{userName, eventName, submitted_atDate});
@@ -745,7 +804,7 @@ public class GUI {
             }
         });
 
-        goBackButton.addActionListener(new ActionListener() {
+        goBackApproval.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ViewEvalForm.setVisible(false);
@@ -1020,10 +1079,14 @@ public class GUI {
         profileHistoryTableModel.setRowCount(0);
 
         for (EvaluationForm archive :evalformArchive) {
-            String eventName = databaseManager.getEventName(archive.getEventID());
+            Event event = databaseManager.getEvent(archive.getEventID());
+            String eventName = event.getName();
 
             profileHistoryTableModel.addRow(new Object[]{eventName, archive.getRole(), archive.getRolePoints()});
         }
+
+        profileHistoryTableModel.fireTableDataChanged();
+        profileHistoryTable.repaint();
     }
 
     public static void main(String[] args) {
