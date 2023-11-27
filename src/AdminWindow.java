@@ -16,57 +16,37 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.UUID;
 
-public class GUI {
-    private JPanel MainWindow;
-    private JPanel MainPanel;
+public class AdminWindow {
     private JPanel SidePanel;
-    private JTextField fullNameTextField;
-    private JPasswordField passwordPasswordField;
-    private JButton signUpButton;
-    private JButton goToLogIn;
-    private JTextField emailTextField;
-    private JTextField idNumberTextField;
-    private JPanel SignUp;
-    private JPanel LogIn;
-    private JLabel SignUpTitle;
-    private JLabel LogInTitle;
-    private JPasswordField passwordField;
-    private JTextField emailField;
-    private JButton goToSignUp;
-    private JPanel Profile;
-    private JPanel OnBoardingSP;
-    private JPanel StudentSP;
-    private JButton StudentProfileBtn;
-    private JButton evaluationFormButton;
-    private JButton logInBtn;
+    private JPanel MainPanel;
+    private JPanel AdminSP;
     private JButton dashboardButton;
     private JButton userManangementButton;
     private JButton approvalButton;
     private JButton AdminProfileBtn;
-    private JPanel AdminSP;
-    private JButton StudentLogout;
     private JButton AdminLogout;
-    private JPanel UserInfo;
-    private JPanel UserCES;
-    private JButton changePass;
-    private JLabel userName;
-    private JLabel userType;
-    private JLabel userCourse;
-    private JLabel userPoints;
-    private JPanel EvalForm;
-    private JComboBox eventsBox;
-    private JTextField q1TxtF;
-    private JTextField q2TxtF;
-    private JButton beginningButton;
-    private JButton middleButton;
-    private JButton endButton;
-    private JLabel beginningImage;
-    private JLabel middleImage;
-    private JLabel endImage;
-    private JButton submitEvalFormBtn;
+    private JPanel Dashboard;
+    private JPanel dashboardLeftPanel;
+    private JTextField eventNameTxtF;
+    private JTextField eventLocTxtF;
+    private JTextField eventModeTxtF;
+    private JButton addEventButton;
+    private JTextField eventTypeTxtF;
+    private JTextField startTimeField;
+    private JButton startTimeButton;
+    private JTextField dateField;
+    private JTextField endTimeField;
+    private JButton endTimeButton;
+    private JPanel role1Panel;
+    private JTextField role1Field;
+    private JTextField role1Points;
+    private JPanel role2Panel;
+    private JTextField role2Field;
+    private JTextField role2Points;
+    private JTable eventsTable;
     private JPanel UserManagement;
     private JTable umTable;
-    private JButton setYrLvlBtn;
+    private JButton allButton;
     private JButton year1Button;
     private JButton year2Button;
     private JButton year3Button;
@@ -74,98 +54,86 @@ public class GUI {
     private JButton batchXButton;
     private JButton editButton;
     private JButton deleteButton;
-    private JButton allButton;
+    private JButton viewHistoryButton;
     private JTextField searchField;
-    private JPanel Dashboard;
-    private JTextField eventNameTxtF;
-    private JTextField eventLocTxtF;
-    private JTextField eventTypeTxtF;
-    private JTextField eventModeTxtF;
-    private JButton addEventButton;
-    private JTextField dateField;
-    private JTextField startTimeField;
-    private JButton startTimeButton;
-    private JTextField endTimeField;
-    private JButton endTimeButton;
-    private JTable eventsTable;
-    private JTextField q3TxtF;
-    private JTextField q4TxtF;
-    private JTextField q5TxtF;
-    private JRadioButton angryRadioButton;
-    private JRadioButton disappointedRadioButton;
-    private JRadioButton neutralRadioButton;
-    private JRadioButton goodRadioButton;
-    private JRadioButton loveEmojisRadioButton;
-    private JScrollPane efScrollPane;
+    private JPanel Window;
     private JPanel Approval;
     private JTable approvalTable;
     private JButton viewFormButton;
+    private JPanel Profile;
+    private JPanel UserInfo;
+    private JLabel userName;
+    private JLabel userType;
+    private JLabel userCourse;
+    private JButton setYrLvlBtn;
+    private JButton changePass;
+    private JPanel UserCES;
+    private JLabel userPoints;
+    private JPanel UserHistory;
+    private JTable profileHistoryTable;
     private JPanel ViewEvalForm;
-    private JButton goBackApproval;
-    private JButton approveButton;
-    private JButton declineButton;
+    private JScrollPane veScrollPane;
     private JTextField veQ1;
     private JTextField veQ2;
     private JTextField veQ3;
     private JTextField veQ4;
     private JTextField veQ5;
-    private JLabel eventTitleField;
-    private JLabel bImg;
-    private JLabel mImg;
-    private JLabel eImg;
     private JRadioButton veR1;
     private JRadioButton veR2;
     private JRadioButton veR3;
     private JRadioButton veR4;
     private JRadioButton veR5;
-    private JScrollPane veScrollPane;
-    private JTextField role1Field;
-    private JTextField role1Points;
-    private JPanel role1Panel;
-    private JPanel dashboardLeftPanel;
-    private JPanel role2Panel;
-    private JTextField role2Field;
-    private JTextField role2Points;
-    private JComboBox rolesBox;
+    private JButton goBackApproval;
+    private JButton declineButton;
+    private JButton approveButton;
+    private JLabel eventTitleField;
+    private JLabel bImg;
+    private JLabel mImg;
+    private JLabel eImg;
     private JLabel roleTitleField;
-    private JPanel UserHistory;
-    private JTable profileHistoryTable;
-    private JButton viewHistoryButton;
     private JPanel ViewHistory;
     private JTable userHistoryTable;
     private JButton goBackUMButton;
+
+    private DatabaseManager databaseManager;
+    private Controller controller;
+
+    private User loggedUser;
+
+    private List<User> users;
+    private List<Event> events;
+    private List<EvaluationForm> evalFormDataList;
+    private List<EvaluationForm> evalformArchive;
 
     private DefaultTableModel umTableModel;
     private DefaultTableModel eventsTableModel;
     private DefaultTableModel approvalTableModel;
     private DefaultTableModel profileHistoryTableModel;
     private DefaultTableModel userHistoryTableModel;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private DateChooser datePicker = new DateChooser();
     private TimePicker timePicker = new TimePicker();
-    private ButtonGroup radioBtnGroup;
     private ButtonGroup veBtnGroup;
 
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    private DatabaseManager databaseManager;
-    private Controller controller;
-    private List<User> users;
-    private List<Event> events;
-    private List<EvaluationForm> evalFormDataList;
-    private List<EvaluationForm> evalformArchive;
-    private User loggedUser;
-    private int roleCounter = 1;
+    AdminWindow(User loggedUser) {
+        this.loggedUser = loggedUser;
+        initializeWindow();
+    }
 
-    GUI() {
+    AdminWindow() {
+        initializeWindow();
+    }
+
+    private void initializeWindow() {
         databaseManager = new DatabaseManager("jdbc:mysql://localhost:3306/oop", "root", "");
         controller = new Controller();
 
         JFrame frame = new JFrame("CES TRACKER");
-
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1350, 750);
+        frame.add(Window);
         frame.setResizable(false);
-
-        frame.add(MainWindow);
+        frame.setVisible(true);
 
         datePicker.setLabelCurrentDayVisible(false);
         datePicker.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
@@ -228,13 +196,6 @@ public class GUI {
         profileHistoryTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         profileHistoryTable.setModel(profileHistoryTableModel);
 
-        radioBtnGroup = new ButtonGroup();
-        radioBtnGroup.add(angryRadioButton);
-        radioBtnGroup.add(disappointedRadioButton);
-        radioBtnGroup.add(neutralRadioButton);
-        radioBtnGroup.add(goodRadioButton);
-        radioBtnGroup.add(loveEmojisRadioButton);
-
         veBtnGroup = new ButtonGroup();
         veBtnGroup.add(veR1);
         veBtnGroup.add(veR2);
@@ -242,220 +203,25 @@ public class GUI {
         veBtnGroup.add(veR4);
         veBtnGroup.add(veR5);
 
-        efScrollPane.getVerticalScrollBar().setUnitIncrement(20);
+//        efScrollPane.getVerticalScrollBar().setUnitIncrement(20);
         veScrollPane.getVerticalScrollBar().setUnitIncrement(20);
 
-        SignUpTitle.setVisible(false);
-        OnBoardingSP.setVisible(false);
-        LogIn.setVisible(false);
-        Profile.setVisible(false);
-        EvalForm.setVisible(false);
+        Profile.setVisible(true);
         Dashboard.setVisible(false);
         UserManagement.setVisible(false);
         Approval.setVisible(false);
-        frame.setVisible(true);
 
-        performAutoLogin();
-
-        signUpButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                UUID uuid = UUID.randomUUID();
-
-                String id = String.valueOf(uuid);
-                String fullName = fullNameTextField.getText();
-                String email = emailTextField.getText();
-                String password = String.valueOf(passwordPasswordField.getPassword());
-                int idNumber = Integer.parseInt(idNumberTextField.getText());
-                String type = databaseManager.isAdminEmail(email) ? "Admin" : "Student";
-
-                databaseManager.insertUserData(id, fullName, email, password, idNumber, type, 0);
-                clearTextFields();
-            }
-        });
-
-        goToLogIn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearTextFields();
-                SignUp.setVisible(false);
-                LogIn.setVisible(true);
-                SignUpTitle.setVisible(false);
-                LogInTitle.setVisible(true);
-            }
-        });
-
-        goToSignUp.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearTextFields();
-                SignUp.setVisible(true);
-                LogIn.setVisible(false);
-                SignUpTitle.setVisible(true);
-                LogInTitle.setVisible(false);
-            }
-        });
-
-        logInBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String email = emailField.getText();
-                String password = String.valueOf(passwordField.getPassword());
-                String userID = databaseManager.getUserID(email);
-
-                try {
-                    if (databaseManager.isEmailExists(email)) {
-                        if (databaseManager.authenticateUser(email, password)) {
-                            loggedUser = databaseManager.getUser(userID);
-                            updateLoggedInUserInfoLabels(loggedUser.getUniqueID());
-                            showHistory();
-
-                            String userType = loggedUser.getType();
-
-                            if ("Admin".equals(userType)) {
-                                OnBoardingSP.setVisible(false);
-                                StudentSP.setVisible(false);
-                                LogIn.setVisible(false);
-                                EvalForm.setVisible(false);
-                                Dashboard.setVisible(false);
-                                UserManagement.setVisible(false);
-
-                                AdminSP.setVisible(true);
-                                Profile.setVisible(true);
-
-                                JOptionPane.showMessageDialog(null, "Admin login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                            } else if ("Student".equals(userType)) {
-                                OnBoardingSP.setVisible(false);
-                                AdminSP.setVisible(false);
-                                LogIn.setVisible(false);
-                                EvalForm.setVisible(false);
-                                Dashboard.setVisible(false);
-                                UserManagement.setVisible(false);
-
-                                StudentSP.setVisible(true);
-                                Profile.setVisible(true);
-
-                                JOptionPane.showMessageDialog(null, "Student login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                            } else {
-                                JOptionPane.showMessageDialog(null, "Unknown user type. Please contact support.", "Error", JOptionPane.ERROR_MESSAGE);
-                            }
-                            controller.writeLoggedUserToFile(loggedUser.getUniqueID());
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Incorrect password. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
-                        }
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Email not found. Please sign up or try again.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                    clearTextFields();
-                } catch (SQLException ex) {
-                    JOptionPane.showMessageDialog(null, "Failed to authenticate user.\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-        StudentProfileBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Profile.setVisible(true);
-                EvalForm.setVisible(false);
-
-                updateLoggedInUserInfoLabels(loggedUser.getUniqueID());
-                showHistory();
-            }
-        });
+        updateLoggedInUserInfoLabels(loggedUser.getUniqueID());
+        showHistory();
 
         AdminProfileBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Dashboard.setVisible(false);
                 UserManagement.setVisible(false);
+                Approval.setVisible(false);
                 Profile.setVisible(true);
-
-                updateLoggedInUserInfoLabels(loggedUser.getUniqueID());
                 showHistory();
-            }
-        });
-
-        evaluationFormButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                EvalForm.setVisible(true);
-                Profile.setVisible(false);
-
-                events = databaseManager.getAllEvents();
-                eventsBox.removeAllItems();
-                eventsBox.addItem("Select Event Name");
-
-                rolesBox.removeAllItems();
-                rolesBox.addItem("Select Role");
-
-                for (Event event : events) {
-                    eventsBox.addItem(event.getName());
-                }
-
-                eventsBox.setSelectedIndex(0);
-
-                eventsBox.addItemListener(new ItemListener() {
-                    @Override
-                    public void itemStateChanged(ItemEvent e) {
-                        if (e.getStateChange() == ItemEvent.SELECTED) {
-                            rolesBox.removeAllItems();
-                            rolesBox.addItem("Select Role");
-
-                            String selectedEventName = (String) eventsBox.getSelectedItem();
-                            Event selectedEvent = null;
-
-                            for (Event event : events) {
-                                if (event.getName().equals(selectedEventName)) {
-                                    selectedEvent = event;
-                                    break;
-                                }
-                            }
-
-                            if (selectedEvent != null) {
-                                String[] eventRoles = selectedEvent.getRoles().split(",");
-                                for (String role : eventRoles) {
-                                    rolesBox.addItem(role.trim());
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-        });
-
-        submitEvalFormBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    BufferedReader reader = new BufferedReader(new FileReader("loggedUser.txt"));
-                    String id = reader.readLine();
-                    reader.close();
-
-                    UUID uuid = UUID.randomUUID();
-                    String selectedEventName = (String) eventsBox.getSelectedItem();
-
-                    String evalformID = String.valueOf(uuid);
-                    String eventID = getEventIDFromName(selectedEventName);
-                    String qOne = q1TxtF.getText();
-                    String qTwo = q2TxtF.getText();
-                    String qThree = q3TxtF.getText();
-                    String qFour = q4TxtF.getText();
-                    String qFive = q5TxtF.getText();
-                    String role = (String) rolesBox.getSelectedItem();
-                    int rolePoints = databaseManager.getRolePoints(eventID, role);
-                    String rating = getSelectedRadioValue();
-                    ImageIcon beginningImg = (ImageIcon) beginningImage.getIcon();
-                    ImageIcon middleImg = (ImageIcon) middleImage.getIcon();
-                    ImageIcon endImg = (ImageIcon) endImage.getIcon();
-
-                    if (beginningImg != null && middleImg != null && endImg != null) {
-                        databaseManager.insertEvalForm(evalformID, id, eventID, qOne, qTwo, qThree, qFour, qFive, role, rolePoints, rating, beginningImg, middleImg, endImg);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Please select images for all three categories.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                } catch (IOException | RuntimeException ex) {
-                    ex.printStackTrace();
-                }
             }
         });
 
@@ -824,6 +590,7 @@ public class GUI {
                     if (selectedOption != null) {
                         ((Student) loggedUser).setYearLevel(selectedOption);
                         databaseManager.setYearLevel(loggedUser.getUniqueID(), selectedOption);
+                        updateLoggedInUserInfoLabels(loggedUser.getUniqueID());
                     }
                 } else {
                     JOptionPane.showMessageDialog(null, "Year level can only be set for students.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -858,62 +625,21 @@ public class GUI {
             }
         });
 
-        ActionListener logoutListener = new ActionListener() {
+        AdminLogout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SignUpTitle.setVisible(false);
-                AdminSP.setVisible(false);
-                StudentSP.setVisible(false);
-                Profile.setVisible(false);
-                EvalForm.setVisible(false);
-                Dashboard.setVisible(false);
-                UserManagement.setVisible(false);
-                Approval.setVisible(false);
-
-                OnBoardingSP.setVisible(true);
-                LogIn.setVisible(true);
-
                 try {
                     FileWriter writer = new FileWriter("loggedUser.txt");
                     writer.write("");
                     writer.close();
+
+                    frame.dispose();
+                    MainWindow mainWindow = new MainWindow();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
             }
-        };
-
-        ActionListener selectImage = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JButton sourceBtn = (JButton) e.getSource();
-
-                JFileChooser chooser = new JFileChooser(".");
-                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                int response = chooser.showOpenDialog(null);
-
-                if (response == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = chooser.getSelectedFile();
-
-                    try {
-                        BufferedImage img = ImageIO.read(selectedFile);
-                        Image resizedImage = img.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
-                        ImageIcon icon = new ImageIcon(resizedImage);
-
-                        if (sourceBtn == beginningButton && beginningImage != null) {
-                            beginningImage.setIcon(icon);
-                        } else if (sourceBtn == middleButton && middleImage != null) {
-                            middleImage.setIcon(icon);
-                        } else if (sourceBtn == endButton && endImage != null) {
-                            endImage.setIcon(icon);
-                        }
-
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }
-        };
+        });
 
         ActionListener yearLevelFilterListener = new ActionListener() {
             @Override
@@ -945,11 +671,6 @@ public class GUI {
             }
         };
 
-        AdminLogout.addActionListener(logoutListener);
-        StudentLogout.addActionListener(logoutListener);
-        beginningButton.addActionListener(selectImage);
-        middleButton.addActionListener(selectImage);
-        endButton.addActionListener(selectImage);
         allButton.addActionListener(yearLevelFilterListener);
         year1Button.addActionListener(yearLevelFilterListener);
         year2Button.addActionListener(yearLevelFilterListener);
@@ -958,51 +679,7 @@ public class GUI {
         batchXButton.addActionListener(yearLevelFilterListener);
     }
 
-    private void performAutoLogin() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("loggedUser.txt"));) {
-            String userID = reader.readLine();
-
-            if (userID != null && !userID.isEmpty()) {
-                loggedUser = databaseManager.getUser(userID);
-
-                if (loggedUser != null) {
-                    updateLoggedInUserInfoLabels(userID);
-                    showHistory();
-
-                    String userType = loggedUser.getType();
-
-                    SignUp.setVisible(false);
-                    LogIn.setVisible(false);
-                    EvalForm.setVisible(false);
-                    OnBoardingSP.setVisible(false);
-                    Profile.setVisible(true);
-
-                    if ("Admin".equals(userType)) {
-                        StudentSP.setVisible(false);
-                        AdminSP.setVisible(true);
-                    } else if ("Student".equals(userType)) {
-                        AdminSP.setVisible(false);
-                        StudentSP.setVisible(true);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Unknown user type. Please contact support.", "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void clearTextFields() {
-        fullNameTextField.setText("");
-        passwordPasswordField.setText("");
-        emailTextField.setText("");
-        idNumberTextField.setText("");
-        passwordField.setText("");
-        emailField.setText("");
-    }
-
-    private void updateLoggedInUserInfoLabels(String id) {
+    public void updateLoggedInUserInfoLabels(String id) {
         User userProfile = databaseManager.getUser(id);
 
         if (userProfile != null) {
@@ -1012,42 +689,11 @@ public class GUI {
 
             userName.setText(name);
             userType.setText(type);
-
-            if ("Student".equals(userProfile.getType())) {
-                userCourse.setText("BS Computer Engineering - " + ((Student) userProfile).getYearLevel());
-            } else {
-                userCourse.setText("BS Computer Engineering");
-            }
-
+            userCourse.setText("BS Computer Engineering");
             userPoints.setText(String.valueOf(cesPoints));
         } else {
             JOptionPane.showMessageDialog(null, "User not found. Please log in again.", "Error", JOptionPane.ERROR_MESSAGE);
-            clearTextFields();
         }
-    }
-
-    private String getEventIDFromName(String eventName) {
-        for (Event event : events) {
-            if (event.getName().equals(eventName)) {
-                return event.getUniqueID();
-            }
-        }
-        return null;
-    }
-
-    private String getSelectedRadioValue() {
-        if (angryRadioButton.isSelected()) {
-            return "Angry";
-        } else if (disappointedRadioButton.isSelected()) {
-            return "Disappointed";
-        } else if (neutralRadioButton.isSelected()) {
-            return "Neutral";
-        } else if (goodRadioButton.isSelected()) {
-            return "Good";
-        } else if (loveEmojisRadioButton.isSelected()) {
-            return "Love Emojis";
-        }
-        return null;
     }
 
     private void setRatingInButtonGroup(String rating) {
@@ -1089,12 +735,7 @@ public class GUI {
         profileHistoryTable.repaint();
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new GUI();
-            }
-        });
-    }
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(AdminWindow::new);
+//    }
 }
