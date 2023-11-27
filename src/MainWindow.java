@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -26,12 +27,17 @@ public class MainWindow extends JFrame {
     private JButton logInBtn;
     private JButton goToSignUp;
     private JPanel Window;
+    private JLabel picLabel;
+    private JLabel picLabelLogIn;
 
     private DatabaseManager databaseManager;
     private Controller controller;
 
     private User loggedUser;
-
+    private ImageIcon currentIcon;
+    private Image currentImage;
+    private Image resizedImage;
+    private ImageIcon resizedIcon;
     MainWindow() {
         initializeWindow();
     }
@@ -39,6 +45,23 @@ public class MainWindow extends JFrame {
     private void initializeWindow() {
         databaseManager = new DatabaseManager("jdbc:mysql://localhost:3306/oop", "root", "");
         controller = new Controller();
+        int newWidth = 150;
+        int newHeight = 150;
+
+        currentIcon = (ImageIcon) picLabel.getIcon();
+        currentImage = currentIcon.getImage();
+
+
+        resizedImage = currentImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+        resizedIcon = new ImageIcon(resizedImage);
+        picLabel.setIcon(resizedIcon);
+
+        currentIcon = (ImageIcon) picLabelLogIn.getIcon();
+        currentImage = currentIcon.getImage();
+
+        resizedImage = currentImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+        resizedIcon = new ImageIcon(resizedImage);
+        picLabelLogIn.setIcon(resizedIcon);
 
         frame = new JFrame("CES TRACKER");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
