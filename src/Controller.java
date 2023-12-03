@@ -23,6 +23,22 @@ public class Controller {
         }
     }
 
+    public void checkButtonState(JButton button) {
+        File file = new File("settings.config");
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.equals("disabled")) {
+                    button.setEnabled(false);
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Encrypts a password using the StrongPasswordEncryptor.
      *
