@@ -23,6 +23,11 @@ public class Controller {
         }
     }
 
+    /**
+     * Checks the state of a JButton based on the content of the "settings.config" file.
+     * If the content of the file is "disabled", the button is set to disabled.
+     * @param button - The JButton to be checked and possibly disabled.
+     */
     public void checkButtonState(JButton button) {
         File file = new File("settings.config");
 
