@@ -142,7 +142,7 @@ public class AdminWindow extends javax.swing.JFrame {
     private javax.swing.JButton year4Btn;
     private javax.swing.JPanel yrLevel;
     private javax.swing.JLabel approvalNameField;
-    private javax.swing.JLabel approvalYrLvlField;
+    private  javax.swing.JLabel approvalYrLvlField;
     private javax.swing.JLabel logo;
 
     private DefaultTableModel eventsTableModel;

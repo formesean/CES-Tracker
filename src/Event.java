@@ -24,82 +24,42 @@ public class Event {
     }
 
     public String getUniqueID() {
-        return this.uniqueID;
-    }
-
-    public void setUniqueID(String uniqueID) {
-        this.uniqueID = uniqueID;
+        return uniqueID;
     }
 
     public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        return name;
     }
 
     public String getLocation() {
-        return this.location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
+        return location;
     }
 
     public String getDate() {
-        return this.date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
+        return date;
     }
 
     public String getStartTime() {
-        return this.startTime;
-    }
-
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
+        return startTime;
     }
 
     public String getEndTime() {
-        return this.endTime;
-    }
-
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
+        return endTime;
     }
 
     public String getType() {
-        return this.type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+        return type;
     }
 
     public String getMode() {
-        return this.mode;
-    }
-
-    public void setMode(String mode) {
-        this.mode = mode;
+        return mode;
     }
 
     public String getRoles() {
-        return this.roles;
-    }
-
-    public void setRoles(String roles) {
-        this.roles = roles;
+        return roles;
     }
 
     public String getRolePoints() {
-        return this.rolePoints;
-    }
-
-    public void setRolePoints(String rolePoints) {
-        this.rolePoints = rolePoints;
+        return rolePoints;
     }
 }

@@ -8,9 +8,10 @@ public class User {
     private String type;
     private int cesPoints;
 
-    public User() {
-    }
+    User() {
 
+    }
+    
     User(String uniqueID, String fullName, String email, int idNumber, String type, int cesPoints) {
         this.uniqueID = uniqueID;
         this.fullName = fullName;
@@ -42,29 +43,5 @@ public class User {
 
     public int getCESPoints() {
         return this.cesPoints;
-    }
-
-    public void setUniqueID(String uniqueID) {
-        this.uniqueID = uniqueID;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setIdNumber(int idNumber) {
-        this.idNumber = idNumber;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void setCESPoints(int cesPoints) {
-        this.cesPoints = cesPoints;
     }
 }
